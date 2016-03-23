@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.iscte.daam.bookcase.bo.Book;
+import pt.iscte.daam.bookcase.bo.TestBook;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 
@@ -145,7 +146,11 @@ public class BookCaseMainActivity extends AppCompatActivity {
         }
 
         private List<Book> getBooks(){
-            return null;
+            ArrayList<Book> books = new ArrayList<>();
+            TestBook book1 = new TestBook();
+
+            books.add(book1);
+            return books;
         }
     }
 
