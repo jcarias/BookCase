@@ -22,6 +22,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.iscte.daam.bookcase.bo.Book;
+
 public class BookCaseMainActivity extends AppCompatActivity {
 
     /**
@@ -134,8 +136,16 @@ public class BookCaseMainActivity extends AppCompatActivity {
             // array as a third parameter.
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.book_list_item, R.id.tvBookTitle, your_array_list);
 
+
+            List<Book> books =  getBooks();
+
+
             listView.setAdapter(arrayAdapter);
             return rootView;
+        }
+
+        private List<Book> getBooks(){
+            return null;
         }
     }
 
