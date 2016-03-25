@@ -12,8 +12,9 @@ public abstract class DefaultBook implements Book {
     protected String releaseYear;
     protected String releaseMonth;
     protected String releaseDay;
+    protected String codeISBN;
 
     //TODO: Colocar aqui os restantes atributos gerais dos livros
 
-    // NOTA: As propriedades adicionais que sejam necessárias, ie., não comuns a todos os tipos de livro irão para as implementações epecificas de cada classe.
+    // NOTE: As propriedades adicionais que sejam necessárias, ie., não comuns a todos os tipos de livro irão para as implementações epecificas de cada classe.
 }
