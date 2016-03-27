@@ -1,5 +1,6 @@
 package pt.iscte.daam.bookcase;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -103,6 +104,12 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.profile_menu) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         }
 
