@@ -8,4 +8,5 @@
     <string name="lent_books">Lent Books</string>
     <string name="title_activity_profile">Profile</string>
     <string name="loginButton">Login With Facebook</string>
+    <string name="facebook_app_id">1722753457938805</string>
 </resources>
