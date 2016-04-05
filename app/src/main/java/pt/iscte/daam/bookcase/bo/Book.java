@@ -9,11 +9,18 @@ import java.util.List;
  */
 public interface Book {
 
-    public String getTitle();
-    public List<String> getAuthors();
-    public String getReleaseYear();
-    public String getReleaseMonth();
-    public String getReleaseDay();
-    public Image getCoverImage();
+    String getTitle();
+
+    List<String> getAuthors();
+
+    String getReleaseYear();
+
+    String getReleaseMonth();
+
+    String getReleaseDay();
+
+    String getCodeISBN();
+
+    Image getCoverImage();
 
 }

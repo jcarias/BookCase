@@ -35,7 +35,15 @@ public class TestBook extends DefaultBook {
     }
 
     @Override
+    public String getCodeISBN() {
+        return codeISBN;
+    }
+
+    @Override
     public Image getCoverImage() {
         return null;
     }
+
+
+
 }

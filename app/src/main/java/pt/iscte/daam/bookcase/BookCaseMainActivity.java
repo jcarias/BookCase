@@ -1,5 +1,7 @@
 package pt.iscte.daam.bookcase;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,8 +23,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import pt.iscte.daam.bookcase.bo.Book;
+import pt.iscte.daam.bookcase.bo.TestBook;
+import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 
@@ -63,6 +68,18 @@ public class BookCaseMainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                SearchBooksTask task = new SearchBooksTask();
+                AsyncTask<String, Void, Book[]> bookSearch = task.execute("End");
+                try {
+                    Book[] books = bookSearch.get();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -87,6 +104,12 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.profile_menu) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -145,7 +168,11 @@ public class BookCaseMainActivity extends AppCompatActivity {
         }
 
         private List<Book> getBooks(){
-            return null;
+            ArrayList<Book> books = new ArrayList<>();
+            TestBook book1 = new TestBook();
+
+            books.add(book1);
+            return books;
         }
     }
 
