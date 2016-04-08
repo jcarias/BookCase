@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 AccessToken accessToken = loginResult.getAccessToken();
 
-                GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject user, GraphResponse graphResponse) {
                         userProfile.setName(user.optString("name"));
@@ -61,7 +61,14 @@ public class ProfileActivity extends AppCompatActivity {
 
                         fillUserInformation();
                     }
-                }).executeAsync();
+                });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,picture");
+
+                request.setParameters(parameters);
+
+                request.executeAsync();
 
                 Log.i(TAG, "Success!");
             }
