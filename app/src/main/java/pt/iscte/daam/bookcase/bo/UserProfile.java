@@ -1,5 +1,7 @@
 package pt.iscte.daam.bookcase.bo;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by DVF on 06-04-2016.
  */
@@ -8,7 +10,7 @@ public class UserProfile
     private String name;
     private String facebookId;
     private String email;
-    private String picture;
+    private Bitmap picture;
 
     public String getName() {
         return name;
@@ -36,12 +38,12 @@ public class UserProfile
         this.facebookId = facebookId;
     }
 
-    public String getPicture() {
+    public Bitmap getPicture() {
 
         return picture;
     }
 
-    public void setPicture(String picture) {
+    public void setPicture(Bitmap picture) {
 
         this.picture = picture;
     }
