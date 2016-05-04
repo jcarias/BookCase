@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -31,7 +32,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
     private CallbackManager callbackManager;
-    private UserProfile userProfile;
 
     public class DownloadPicture extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... url) {
@@ -41,7 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 URL pictureURL = new URL(url[0]);
                 Bitmap bitmap = BitmapFactory.decodeStream(pictureURL.openConnection().getInputStream());
-                userProfile.setPicture(bitmap);
+                UserProfile.getUserProfile(getApplicationContext()).setPicture(bitmap, getApplicationContext());
 
                 fillUserInformation();
 
@@ -62,10 +62,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile);
 
-        this.userProfile = new UserProfile();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
         if(accessToken == null) {
+
             final LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList("user_friends", "email"));
 
@@ -75,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
             loginButton.registerCallback(this.callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    ((TextView) findViewById(R.id.textViewName)).setText("Loading...");
                     getUserInfo(loginResult.getAccessToken());
                 }
 
@@ -89,8 +90,24 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         } else {
-            getUserInfo(accessToken);
+            fillUserInformation();
         }
+
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
+
+                if (currentAccessToken == null){
+                    UserProfile.destroyProfile(getApplicationContext());
+
+                    ((TextView) findViewById(R.id.textViewName)).setText("");
+                    ((TextView) findViewById(R.id.textViewEmail)).setText("");
+                    ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(null);
+                }
+            }
+        };
     }
 
     @Override
@@ -99,13 +116,20 @@ public class ProfileActivity extends AppCompatActivity {
         this.callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        UserProfile.saveProfile(getApplicationContext());
+    }
+
     private void fillUserInformation() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((TextView) findViewById(R.id.textViewName)).setText("Hi " + userProfile.getName());
-                ((TextView) findViewById(R.id.textViewEmail)).setText(userProfile.getEmail());
-                ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(userProfile.getPicture());
+                ((TextView) findViewById(R.id.textViewName)).setText("Hi " + UserProfile.getUserProfile(getApplicationContext()).getName());
+                ((TextView) findViewById(R.id.textViewEmail)).setText(UserProfile.getUserProfile(getApplicationContext()).getEmail());
+                ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(UserProfile.getUserProfile(getApplicationContext()).getPicture(getApplicationContext()));
             }
         });
     }
@@ -116,9 +140,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onCompleted(JSONObject user, GraphResponse graphResponse) {
                 try {
-                    userProfile.setName(user.optString("name"));
-                    userProfile.setEmail(user.optString("email"));
-                    userProfile.setFacebookId(user.optString("id"));
+                    UserProfile.getUserProfile(getApplicationContext()).setName(user.optString("name"));
+                    UserProfile.getUserProfile(getApplicationContext()).setEmail(user.optString("email"));
+                    UserProfile.getUserProfile(getApplicationContext()).setFacebookId(user.optString("id"));
 
                     new DownloadPicture().execute(user.getJSONObject("picture").getJSONObject("data").getString("url"));
 

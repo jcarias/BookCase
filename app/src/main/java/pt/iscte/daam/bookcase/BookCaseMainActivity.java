@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.TestBook;
+import pt.iscte.daam.bookcase.bo.UserProfile;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 
 public class BookCaseMainActivity extends AppCompatActivity {
@@ -84,7 +85,6 @@ public class BookCaseMainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
     }
 
 
