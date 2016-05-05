@@ -170,7 +170,15 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
                     skip(parser);
             }
         }
-        book.setAuthors(authorsList);
+
+        String listString = "";
+
+        for (String s : authorsList)
+        {
+            listString += s + "\t";
+        }
+
+        book.setAuthors(listString);
     }
 
 }

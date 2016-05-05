@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import pt.iscte.daam.bookcase.bo.Book;
+import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
+import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.TestBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
@@ -187,20 +189,20 @@ public class BookCaseMainActivity extends AppCompatActivity {
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
+            BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
+            bd.insertMockBooks();
 
+            ArrayList<GRBook> books = bd.GetBooks();
             List<String> your_array_list = new ArrayList<String>();
-            your_array_list.add("foo");
-            your_array_list.add("bar");
+            for(GRBook item : books){
+                your_array_list.add(item.getTitle());
+            }
 
             // This is the array adapter, it takes the context of the activity as a
             // first parameter, the type of list view as a second parameter and your
             // array as a third parameter.
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.book_list_item, R.id.tvBookTitle, your_array_list);
-
-
-            List<Book> books =  getBooks();
-
-
+            
             listView.setAdapter(arrayAdapter);
             return rootView;
         }

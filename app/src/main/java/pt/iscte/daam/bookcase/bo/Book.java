@@ -11,7 +11,7 @@ public interface Book {
 
     String getTitle();
 
-    List<String> getAuthors();
+    String getAuthors();
 
     String getReleaseYear();
 

@@ -8,7 +8,7 @@ import java.util.List;
 public abstract class DefaultBook implements Book {
 
     protected String title;
-    protected List<String> authors;
+    protected String authors;
     protected String releaseYear;
     protected String releaseMonth;
     protected String releaseDay;
@@ -18,7 +18,7 @@ public abstract class DefaultBook implements Book {
         this.title = title;
     }
 
-    public void setAuthors(List<String> authors) {
+    public void setAuthors(String authors) {
         this.authors = authors;
     }
 

@@ -15,7 +15,7 @@ public class TestBook extends DefaultBook {
     }
 
     @Override
-    public List<String> getAuthors() {
+    public String getAuthors() {
         return authors;
     }
 
