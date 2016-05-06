@@ -22,48 +22,13 @@ import java.io.Serializable;
  */
 public class UserProfile
 {
-    private static UserProfile profile = null;
-    private static String filename = "USERPROFILE";
     private static String profilePicture = "PROFILEPICTURE";
 
     public String name;
     public String facebookId;
     public String email;
 
-    private UserProfile() { }
-
-    private UserProfile(Context context) {
-        try {
-            FileInputStream fis = context.openFileInput(filename);
-            StringBuffer fileContent = new StringBuffer("");
-            byte[] buffer = new byte[1024];
-            int n;
-            while (( n = fis.read(buffer)) != -1)
-            {
-                fileContent.append(new String(buffer, 0, n));
-            }
-
-            JSONObject jsonObj = new JSONObject(fileContent.toString());
-
-            this.setEmail(jsonObj.getString("email"));
-            this.setName(jsonObj.getString("name"));
-            this.setFacebookId(jsonObj.getString("facebookId"));
-
-            return;
-
-        } catch (Exception e) {
-            Log.e("USERPROFILE", "Error loading user profile. Error:" + e.getMessage());
-        }
-
-        return;
-    }
-
-    public static UserProfile getUserProfile(Context context){
-        if(profile == null)
-            profile = new UserProfile(context);
-
-        return profile;
-    }
+    public UserProfile() { }
 
     public String getName() {
         return name;
@@ -104,7 +69,7 @@ public class UserProfile
         }
     }
 
-    public void setPicture(Bitmap picture, Context context) {
+    public static void setPicture(Bitmap picture, Context context) {
         try {
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -119,31 +84,22 @@ public class UserProfile
         }
     }
 
-    public static void saveProfile(Context context){
-        try {
+    public void saveProfile(Context context){
+        BookCaseDbHelper db = new BookCaseDbHelper(context);
 
-            if(profile != null) {
-                JSONObject manJson = new JSONObject();
-                manJson.put("email", profile.getEmail());
-                manJson.put("name", profile.getName());
-                manJson.put("facebookId", profile.getFacebookId());
-
-                OutputStreamWriter oos = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
-                oos.write(manJson.toString());
-                oos.close();
-            }
-
-        } catch (Exception e) {
-            Log.e("USERPROFILE", "Error saving user profile. Error:" + e.getMessage());
-        }
+        db.deleteUsers(); //only one user allowed
+        db.InsertUser(this);
     }
 
-    public static void destroyProfile(Context context){
+    public static UserProfile getProfile(Context context){
+        return (new BookCaseDbHelper(context)).GetUser();
+    }
+
+    public static void logoutProfile(Context context){
         try {
-            new File(context.getFilesDir(), filename).delete();
             new File(context.getFilesDir(), profilePicture).delete();
 
-            profile = null;
+            (new BookCaseDbHelper(context)).deleteUsers();
 
         } catch (Exception e) {
             Log.e("USERPROFILE", "Error deleting user profile. Error:" + e.getMessage());

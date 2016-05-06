@@ -20,52 +20,85 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
     //Table Names
     public static final String TABLE_NAME_BOOK = "book";
+    public static final String TABLE_NAME_USERPROFILE = "userprofile";
 
     public BookCaseDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        SQLiteDatabase db = getWritableDatabase(); //to create database
+        this.getWritableDatabase(); //force creation of database
     }
 
     public void insertMockBooks() {
 
-      try {
+          GRBook book = new GRBook();
+          book.setTitle("Fahrenheit 451");
+          book.setCodeISBN("9780007491568");
+          book.setAuthors("Ray Bradbury");
+          book.setReleaseYear("2013");
+          book.setReleaseMonth("03");
+          book.setReleaseDay("28");
 
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+          this.InsertBook(book);
 
-        values.put("Title", "Fahrenheit 451");
-        values.put("CodeISBN", "9780007491568");
-        values.put("Authors", "Ray Bradbury");
-        values.put("ReleaseYear", "2013");
-        values.put("ReleaseMonth", "03");
-        values.put("ReleaseDay", "28");
+          book = new GRBook();
+          book.setTitle("1984");
+          book.setCodeISBN("9780451524935");
+          book.setAuthors("George Orwell, Erich Fromm");
+          book.setReleaseYear("1950");
+          book.setReleaseMonth("07");
+          book.setReleaseDay("01");
 
-        database.insertOrThrow(TABLE_NAME_BOOK, null, values);
+          this.InsertBook(book);
+    }
 
-        values = new ContentValues();
+    public void InsertBook(GRBook book) {
+        try {
 
-        values.put("Title", "1984");
-        values.put("CodeISBN", "9780451524935");
-        values.put("Authors", "George Orwell, Erich Fromm");
-        values.put("ReleaseYear", "1950");
-        values.put("ReleaseMonth", "07");
-        values.put("ReleaseDay", "01");
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
 
-        database.insertOrThrow(TABLE_NAME_BOOK, null, values);
+            values.put("Title", book.getTitle());
+            values.put("CodeISBN", book.getCodeISBN());
+            values.put("Authors", book.getAuthors());
+            values.put("ReleaseYear", book.getReleaseYear());
+            values.put("ReleaseMonth", book.getReleaseMonth());
+            values.put("ReleaseDay", book.getReleaseDay());
 
-        database.close();
+            database.insertOrThrow(TABLE_NAME_BOOK, null, values);
 
-      } catch (Exception e) {
-          Log.e("UTILS", "Error inserting database book mocks. Error:" + e.getMessage());
-      }
+            database.close();
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error inserting database book. Error:" + e.getMessage());
+        }
+    }
+
+    public void InsertUser(UserProfile profile) {
+        try {
+
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put("Name", profile.getName());
+            values.put("Email", profile.getEmail());
+            values.put("FacebookId", profile.getFacebookId());
+
+            database.insertOrThrow(TABLE_NAME_USERPROFILE, null, values);
+
+            database.close();
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error inserting database user. Error:" + e.getMessage());
+        }
     }
 
     public ArrayList<GRBook> GetBooks() {
+
+    try{
+
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<GRBook> books = new ArrayList<GRBook>();
 
-       // Cursor c = db.rawQuery("SELECT Title,CodeISBN,Authors,ReleaseYear FROM book"/* + TABLE_NAME_BOOK*/, null);
         Cursor c = db.query(TABLE_NAME_BOOK, new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear"}, null, null, null, null, null);
         if(c.moveToFirst()){
             do{
@@ -85,6 +118,37 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         db.close();
 
         return books;
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error getting books. Error:" + e.getMessage());
+            return null;
+        }
+    }
+
+    public UserProfile GetUser() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        UserProfile userProfile = new UserProfile();
+
+        Cursor c = db.query(TABLE_NAME_USERPROFILE, new String[] {"Name", "Email", "FacebookId" }, null, null, null, null, null);
+        if(c.moveToFirst()){
+
+            userProfile.setName(c.getString(0));
+            userProfile.setEmail(c.getString(1));
+            userProfile.setFacebookId(c.getString(2));
+
+        } else {
+            userProfile = null;
+        }
+        c.close();
+        db.close();
+
+        return userProfile;
+    }
+
+    public void deleteUsers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.delete(TABLE_NAME_USERPROFILE, null, null);
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -92,14 +156,22 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         try {
             String SQL_CREATE_ENTRIES =
                     "CREATE TABLE " + TABLE_NAME_BOOK + " (" +
-                            "ID" + " INTEGER PRIMARY KEY," +
                             "Title " + "TEXT NOT NULL," +
-                            "CodeISBN " + "TEXT NOT NULL," +
+                            "CodeISBN " + "TEXT PRIMARY KEY," +
                             "Authors " + "TEXT NOT NULL," +
                             "ReleaseYear " + "TEXT NOT NULL," +
                             "ReleaseMonth " + "TEXT NOT NULL," +
                             "ReleaseDay " + "TEXT NOT NULL" +
                             ")";
+
+            db.execSQL(SQL_CREATE_ENTRIES);
+
+            SQL_CREATE_ENTRIES =
+                    "CREATE TABLE " + TABLE_NAME_USERPROFILE + " (" +
+                            "Name " + "TEXT NOT NULL," +
+                            "FacebookId " + "TEXT PRIMARY KEY," +
+                            "Email " + "TEXT NOT NULL" +
+                    ")";
 
             db.execSQL(SQL_CREATE_ENTRIES);
 
@@ -109,9 +181,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
-       // db.execSQL(SQL_DELETE_ENTRIES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_BOOK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_USERPROFILE);
+
         onCreate(db);
     }
 

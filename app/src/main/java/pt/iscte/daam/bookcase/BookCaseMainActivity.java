@@ -115,8 +115,10 @@ public class BookCaseMainActivity extends AppCompatActivity {
             return;
 
         try {
-            Bitmap userPhoto = UserProfile.getUserProfile(getApplicationContext()).getPicture(getApplicationContext());
-            if(userPhoto != null) {
+            UserProfile profile = UserProfile.getProfile(getApplicationContext());
+            Bitmap userPhoto = profile.getPicture(getApplicationContext());
+
+            if(profile != null && userPhoto != null) {
                 BitmapDrawable dra = new BitmapDrawable(getApplicationContext().getResources(), userPhoto);
                 this.menu.findItem(R.id.profile_menu).setIcon(dra);
             }
@@ -194,15 +196,18 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
             ArrayList<GRBook> books = bd.GetBooks();
             List<String> your_array_list = new ArrayList<String>();
-            for(GRBook item : books){
-                your_array_list.add(item.getTitle());
+
+            if(books != null) {
+                for (GRBook item : books) {
+                    your_array_list.add(item.getTitle());
+                }
             }
 
             // This is the array adapter, it takes the context of the activity as a
             // first parameter, the type of list view as a second parameter and your
             // array as a third parameter.
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.book_list_item, R.id.tvBookTitle, your_array_list);
-            
+
             listView.setAdapter(arrayAdapter);
             return rootView;
         }

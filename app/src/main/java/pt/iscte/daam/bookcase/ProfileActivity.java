@@ -41,9 +41,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                 URL pictureURL = new URL(url[0]);
                 Bitmap bitmap = BitmapFactory.decodeStream(pictureURL.openConnection().getInputStream());
-                UserProfile.getUserProfile(getApplicationContext()).setPicture(bitmap, getApplicationContext());
+                UserProfile.setPicture(bitmap, getApplicationContext());
 
-                fillUserInformation();
+                fillUserInformation(UserProfile.getProfile(getApplicationContext()));
 
                 return null;
 
@@ -63,8 +63,9 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        UserProfile profile = UserProfile.getProfile(getApplicationContext());
 
-        if(accessToken == null) {
+        if(accessToken == null || profile == null) {
 
             final LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList("user_friends", "email"));
@@ -90,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         } else {
-            fillUserInformation();
+            fillUserInformation(profile);
         }
 
         AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
@@ -100,7 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
                     AccessToken currentAccessToken) {
 
                 if (currentAccessToken == null){
-                    UserProfile.destroyProfile(getApplicationContext());
+                    UserProfile.logoutProfile(getApplicationContext());
 
                     ((TextView) findViewById(R.id.textViewName)).setText("");
                     ((TextView) findViewById(R.id.textViewEmail)).setText("");
@@ -116,20 +117,13 @@ public class ProfileActivity extends AppCompatActivity {
         this.callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        UserProfile.saveProfile(getApplicationContext());
-    }
-
-    private void fillUserInformation() {
+    private void fillUserInformation(final UserProfile profile) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((TextView) findViewById(R.id.textViewName)).setText("Hi " + UserProfile.getUserProfile(getApplicationContext()).getName());
-                ((TextView) findViewById(R.id.textViewEmail)).setText(UserProfile.getUserProfile(getApplicationContext()).getEmail());
-                ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(UserProfile.getUserProfile(getApplicationContext()).getPicture(getApplicationContext()));
+                ((TextView) findViewById(R.id.textViewName)).setText("Hi " + profile.getName());
+                ((TextView) findViewById(R.id.textViewEmail)).setText(profile.getEmail());
+                ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(profile.getPicture(getApplicationContext()));
             }
         });
     }
@@ -140,13 +134,16 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onCompleted(JSONObject user, GraphResponse graphResponse) {
                 try {
-                    UserProfile.getUserProfile(getApplicationContext()).setName(user.optString("name"));
-                    UserProfile.getUserProfile(getApplicationContext()).setEmail(user.optString("email"));
-                    UserProfile.getUserProfile(getApplicationContext()).setFacebookId(user.optString("id"));
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setName(user.optString("name"));
+                    userProfile.setEmail(user.optString("email"));
+                    userProfile.setFacebookId(user.optString("id"));
+
+                    userProfile.saveProfile(getApplicationContext());
 
                     new DownloadPicture().execute(user.getJSONObject("picture").getJSONObject("data").getString("url"));
 
-                    fillUserInformation();
+                    fillUserInformation(userProfile);
                 } catch (Exception e)
                 {
                     return;
