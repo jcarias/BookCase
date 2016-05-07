@@ -156,8 +156,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         try {
             String SQL_CREATE_ENTRIES =
                     "CREATE TABLE " + TABLE_NAME_BOOK + " (" +
+                            "ID " + "INTEGER PRIMARY KEY  AUTOINCREMENT," +
                             "Title " + "TEXT NOT NULL," +
-                            "CodeISBN " + "TEXT PRIMARY KEY," +
+                            "CodeISBN " + "TEXT UNIQUE NOT NULL," +
                             "Authors " + "TEXT NOT NULL," +
                             "ReleaseYear " + "TEXT NOT NULL," +
                             "ReleaseMonth " + "TEXT NOT NULL," +
