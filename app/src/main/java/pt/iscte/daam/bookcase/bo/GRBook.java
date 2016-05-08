@@ -15,6 +15,23 @@ public class GRBook extends DefaultBook {
     private String imageUrl;
     private String smallImageUrl;
 
+    private String lentTo;
+    private String lentToDate;
+
+    public String getLentTo() {
+        return this.lentTo;
+    }
+    public void setLentTo(String lentTo) {
+        this.lentTo = lentTo;
+    }
+
+    public String getLentToDate() {
+        return this.lentToDate;
+    }
+    public void setLentToDate(String lentToDate) {
+        this.lentToDate = lentToDate;
+    }
+
     public String getWorkId() {
         return workId;
     }
@@ -83,6 +100,10 @@ public class GRBook extends DefaultBook {
     @Override
     public String getCodeISBN() {
         return codeISBN;
+    }
+
+    public String getApplicationID() {
+        return applicationID;
     }
 
     @Override

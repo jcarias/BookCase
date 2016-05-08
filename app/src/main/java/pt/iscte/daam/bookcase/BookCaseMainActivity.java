@@ -1,12 +1,10 @@
 package pt.iscte.daam.bookcase;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -23,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,7 +31,6 @@ import java.util.concurrent.ExecutionException;
 import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
-import pt.iscte.daam.bookcase.bo.TestBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 
@@ -60,6 +56,8 @@ public class BookCaseMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_case_main);
+
+        (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -192,9 +190,20 @@ public class BookCaseMainActivity extends AppCompatActivity {
             ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
             BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
-            bd.insertMockBooks();
 
-            ArrayList<GRBook> books = bd.GetBooks();
+            ArrayList<GRBook> books = null;
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+                case 1:
+                    books = bd.getAvailableBooks();
+                    break;
+                case 2:
+                    books = bd.getLentBooks();
+                    break;
+                default:
+                    books = bd.getBooks();
+                    break;
+            }
+
             List<String> your_array_list = new ArrayList<String>();
 
             if(books != null) {
@@ -212,13 +221,6 @@ public class BookCaseMainActivity extends AppCompatActivity {
             return rootView;
         }
 
-        private List<Book> getBooks(){
-            ArrayList<Book> books = new ArrayList<>();
-            TestBook book1 = new TestBook();
-
-            books.add(book1);
-            return books;
-        }
     }
 
     /**
@@ -235,7 +237,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position);
         }
 
         @Override

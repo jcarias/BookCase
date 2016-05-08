@@ -13,9 +13,14 @@ public abstract class DefaultBook implements Book {
     protected String releaseMonth;
     protected String releaseDay;
     protected String codeISBN;
+    protected String applicationID;
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setApplicationID(String applicationID) {
+        this.applicationID = applicationID;
     }
 
     public void setAuthors(String authors) {

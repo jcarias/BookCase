@@ -7,7 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by DVF on 05-05-2016.
@@ -15,7 +19,7 @@ import java.util.ArrayList;
 public class BookCaseDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "BookCase.db";
 
     //Table Names
@@ -38,7 +42,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
           book.setReleaseMonth("03");
           book.setReleaseDay("28");
 
-          this.InsertBook(book);
+          this.insertBook(book);
 
           book = new GRBook();
           book.setTitle("1984");
@@ -48,10 +52,22 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
           book.setReleaseMonth("07");
           book.setReleaseDay("01");
 
-          this.InsertBook(book);
+          this.insertBook(book);
+
+         book = new GRBook();
+         book.setTitle("A Metamorfose");
+         book.setCodeISBN("9789722637114");
+         book.setAuthors("Franz Kafka");
+         book.setReleaseYear("2015");
+         book.setReleaseMonth("02");
+         book.setReleaseDay("01");
+
+         this.insertBook(book);
+
+        this.lentBookTo(this.getBooks().get(0), "David Fernandes");
     }
 
-    public void InsertBook(GRBook book) {
+    public void insertBook(GRBook book) {
         try {
 
             SQLiteDatabase database = this.getWritableDatabase();
@@ -92,14 +108,66 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<GRBook> GetBooks() {
+    public void lentBookTo(GRBook book, String userName) {
+        try {
+
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("LentTo", userName);
+            values.put("LentToDate", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+
+            database.update(TABLE_NAME_BOOK, values, "ID" + "= ?", new String[]{book.getApplicationID()});
+
+            database.close();
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error updating book, lent to. Error:" + e.getMessage());
+        }
+    }
+
+    public ArrayList<GRBook> getBooks() {
+        return this.getBooksFiltered(0);
+    }
+
+    public ArrayList<GRBook> getAvailableBooks() {
+        return this.getBooksFiltered(1);
+    }
+
+    public ArrayList<GRBook> getLentBooks() {
+        return this.getBooksFiltered(2);
+    }
+
+    private ArrayList<GRBook> getBooksFiltered(int filter) {
 
     try{
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<GRBook> books = new ArrayList<GRBook>();
 
-        Cursor c = db.query(TABLE_NAME_BOOK, new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear"}, null, null, null, null, null);
+        String whereClause = null;
+        String[] whereArgs  = null;
+
+        switch (filter) {
+            case 2:
+                whereClause = "LentTo IS NOT NULL";
+                whereArgs = null;
+                break;
+            case 1:
+                whereClause = "LentTo IS NULL";
+                whereArgs = null;
+                break;
+            default:
+                whereArgs = null;
+                whereClause = null;
+                break;
+        }
+
+        Cursor c = db.query(TABLE_NAME_BOOK,
+                            new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate" },
+                            whereClause,
+                            whereArgs,
+                            null, null, null);
+
         if(c.moveToFirst()){
             do{
 
@@ -109,6 +177,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                 newBook.setCodeISBN(c.getString(1));
                 newBook.setAuthors(c.getString(2));
                 newBook.setReleaseYear(c.getString(3));
+                newBook.setApplicationID(c.getString(4));
+                newBook.setLentTo(c.getString(5));
+                newBook.setLentToDate(c.getString(6));
 
                 books.add(newBook);
 
@@ -151,6 +222,12 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME_USERPROFILE, null, null);
     }
 
+    public void deleteBook(GRBook book) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.delete(TABLE_NAME_BOOK, "ID" + "= ?", new String[] { book.getApplicationID() });
+    }
+
     public void onCreate(SQLiteDatabase db) {
 
         try {
@@ -162,7 +239,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                             "Authors " + "TEXT NOT NULL," +
                             "ReleaseYear " + "TEXT NOT NULL," +
                             "ReleaseMonth " + "TEXT NOT NULL," +
-                            "ReleaseDay " + "TEXT NOT NULL" +
+                            "ReleaseDay " + "TEXT NOT NULL," +
+                            "LentTo " + "TEXT NULL," +
+                            "LentToDate " + "TEXT NULL" +
                             ")";
 
             db.execSQL(SQL_CREATE_ENTRIES);
