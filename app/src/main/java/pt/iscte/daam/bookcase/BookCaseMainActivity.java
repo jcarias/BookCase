@@ -114,7 +114,10 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
         try {
             UserProfile profile = UserProfile.getProfile(getApplicationContext());
-            Bitmap userPhoto = profile.getPicture(getApplicationContext());
+            Bitmap userPhoto = null;
+
+            if(profile != null)
+                userPhoto = profile.getPicture(getApplicationContext());
 
             if(profile != null && userPhoto != null) {
                 BitmapDrawable dra = new BitmapDrawable(getApplicationContext().getResources(), userPhoto);
@@ -126,6 +129,10 @@ public class BookCaseMainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("MAINACTIVITY", "Error setting profile picture. Error:" + e.getMessage());
         }
+    }
+
+    public void openBook(View v) {
+        return;
     }
 
     @Override

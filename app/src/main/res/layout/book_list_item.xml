@@ -10,5 +10,6 @@
         android:layout_height="wrap_content"
         android:text="Título de Teste"
         android:id="@+id/tvBookTitle"
+        android:onClick="openBook"
         android:layout_weight="0.06" />
 </LinearLayout>
