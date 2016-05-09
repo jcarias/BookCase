@@ -196,6 +196,50 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    private ArrayList<GRBook> getBooksByName(String bookName) {
+
+        try{
+
+            SQLiteDatabase db = this.getReadableDatabase();
+            ArrayList<GRBook> books = new ArrayList<GRBook>();
+
+            String whereClause = "Title LIKE";
+            String[] whereArgs  = new String[]{"%" + bookName + "%"};
+
+            Cursor c = db.query(TABLE_NAME_BOOK,
+                    new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate" },
+                    whereClause,
+                    whereArgs,
+                    null, null, null);
+
+            if(c.moveToFirst()){
+                do{
+
+                    GRBook newBook = new GRBook();
+
+                    newBook.setTitle(c.getString(0));
+                    newBook.setCodeISBN(c.getString(1));
+                    newBook.setAuthors(c.getString(2));
+                    newBook.setReleaseYear(c.getString(3));
+                    newBook.setApplicationID(c.getString(4));
+                    newBook.setLentTo(c.getString(5));
+                    newBook.setLentToDate(c.getString(6));
+
+                    books.add(newBook);
+
+                }while(c.moveToNext());
+            }
+            c.close();
+            db.close();
+
+            return books;
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error getting books. Error:" + e.getMessage());
+            return null;
+        }
+    }
+
     public UserProfile GetUser() {
         SQLiteDatabase db = this.getReadableDatabase();
         UserProfile userProfile = new UserProfile();

@@ -148,13 +148,6 @@ public class author {
         this.goodreads_author = goodreads_author;
     }
 
-    public pt.iscte.daam.bookcase.BookInfo.user getUser() {
-        return user;
-    }
-
-    public void setUser(pt.iscte.daam.bookcase.BookInfo.user user) {
-        this.user = user;
-    }
 
     public List<book> getBooks() {
         return books;
@@ -169,7 +162,6 @@ public class author {
     private Date born_at;
     private Date died_at;
     private boolean goodreads_author;
-    private user user;
     private List<book> books;
 
 
