@@ -196,15 +196,15 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    private ArrayList<GRBook> getBooksByName(String bookName) {
+    public GRBook getBooksById(String bookId) {
 
         try{
 
             SQLiteDatabase db = this.getReadableDatabase();
-            ArrayList<GRBook> books = new ArrayList<GRBook>();
 
-            String whereClause = "Title LIKE";
-            String[] whereArgs  = new String[]{"%" + bookName + "%"};
+            String whereClause = "ID = ?";
+            //String[] whereArgs  = new String[]{"%" + bookName + "%"};
+            String[] whereArgs  = new String[]{ bookId };
 
             Cursor c = db.query(TABLE_NAME_BOOK,
                     new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate" },
@@ -212,10 +212,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                     whereArgs,
                     null, null, null);
 
-            if(c.moveToFirst()){
-                do{
+            GRBook newBook = new GRBook();
 
-                    GRBook newBook = new GRBook();
+            if(c.moveToFirst()){
 
                     newBook.setTitle(c.getString(0));
                     newBook.setCodeISBN(c.getString(1));
@@ -224,18 +223,15 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                     newBook.setApplicationID(c.getString(4));
                     newBook.setLentTo(c.getString(5));
                     newBook.setLentToDate(c.getString(6));
-
-                    books.add(newBook);
-
-                }while(c.moveToNext());
             }
+
             c.close();
             db.close();
 
-            return books;
+            return newBook;
 
         } catch (Exception e) {
-            Log.e("UTILS", "Error getting books. Error:" + e.getMessage());
+            Log.e("UTILS", "Error getting book with ID " + bookId + ". Error:" + e.getMessage());
             return null;
         }
     }

@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".SelectedBookDetailsActivity"></activity>
 
         <activity
             android:name="com.facebook.FacebookActivity"

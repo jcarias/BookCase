@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,6 +35,9 @@ import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
+import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
+
+import static pt.iscte.daam.bookcase.R.id.imageView;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 
@@ -51,6 +56,8 @@ public class BookCaseMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +97,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
             }
         });
 
@@ -132,7 +140,14 @@ public class BookCaseMainActivity extends AppCompatActivity {
     }
 
     public void openBook(View v) {
-        return;
+        Intent intent = new Intent(this, SelectedBookDetailsActivity.class);
+
+        Bundle b = new Bundle();
+        b.putString("bookApplicationId", "1"); //TODO: change id of book to generic parameter
+
+        intent.putExtras(b);
+
+        startActivity(intent);
     }
 
     @Override
@@ -219,6 +234,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
                 }
             }
 
+            String [] autores= {"João Carias","David Fernandes", "João Fernandes", "Bruno Oliveira"};
             // This is the array adapter, it takes the context of the activity as a
             // first parameter, the type of list view as a second parameter and your
             // array as a third parameter.

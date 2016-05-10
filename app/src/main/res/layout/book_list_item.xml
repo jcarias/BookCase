@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
 
 
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/book"
+        android:paddingLeft="16dp" />
+
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="163dp"
         android:layout_height="wrap_content"
-        android:text="Título de Teste"
+        android:text="Autor Book"
         android:id="@+id/tvBookTitle"
         android:onClick="openBook"
-        android:layout_weight="0.06" />
-</LinearLayout>
+        android:layout_marginRight="8dp"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_alignStart="@+id/tvBookDate"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_width="163dp"
+        android:layout_height="wrap_content"
+        android:text="20-05-2016"
+        android:id="@+id/tvBookDate"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:textSize="14sp" />
+
+
+</RelativeLayout>
