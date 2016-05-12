@@ -32,13 +32,18 @@
         android:layout_height="wrap_content"
         android:id="@+id/ratingBar" />
 
-    <TextView
-        android:layout_width="280dp"
+    <Button
+        android:layout_width="186dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/description"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.42" />
+        android:text="Lend To"
+        android:id="@+id/button"
+        android:onClick="getContacts" />
+
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/listviewpersonalcontacts"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="20dp"
+        android:layout_weight="0.17" />
 
 </LinearLayout>
