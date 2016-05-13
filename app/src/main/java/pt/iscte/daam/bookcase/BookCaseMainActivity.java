@@ -228,7 +228,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
                     Intent intent = new Intent(view.getContext(), SelectedBookDetailsActivity.class);
 
                     Bundle b = new Bundle();
-                    b.putString("bookApplicationId", book.getBookId());
+                    b.putString("bookApplicationId", book.getApplicationID());
 
                     intent.putExtras(b);
 

@@ -163,7 +163,15 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
 
         Cursor c = db.query(TABLE_NAME_BOOK,
-                            new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate", "ReleaseMonth", "ReleaseDay" },
+                            new String[] {"Title",
+                                          "CodeISBN",
+                                          "Authors",
+                                          "ReleaseYear",
+                                          "ID",
+                                          "LentTo",
+                                          "LentToDate",
+                                          "ReleaseMonth",
+                                          "ReleaseDay" },
                             whereClause,
                             whereArgs,
                             null, null, null);
