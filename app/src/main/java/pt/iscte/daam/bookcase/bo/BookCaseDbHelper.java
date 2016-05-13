@@ -163,7 +163,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
 
         Cursor c = db.query(TABLE_NAME_BOOK,
-                            new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate" },
+                            new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate", "ReleaseMonth", "ReleaseDay" },
                             whereClause,
                             whereArgs,
                             null, null, null);
@@ -180,6 +180,8 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                 newBook.setApplicationID(c.getString(4));
                 newBook.setLentTo(c.getString(5));
                 newBook.setLentToDate(c.getString(6));
+                newBook.setReleaseMonth(c.getString(7));
+                newBook.setReleaseDay(c.getString(8));
 
                 books.add(newBook);
 

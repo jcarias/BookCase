@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -139,17 +140,6 @@ public class BookCaseMainActivity extends AppCompatActivity {
         }
     }
 
-    public void openBook(View v) {
-        Intent intent = new Intent(this, SelectedBookDetailsActivity.class);
-
-        Bundle b = new Bundle();
-        b.putString("bookApplicationId", "1"); //TODO: change id of book to generic parameter
-
-        intent.putExtras(b);
-
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -226,21 +216,26 @@ public class BookCaseMainActivity extends AppCompatActivity {
                     break;
             }
 
-            List<String> your_array_list = new ArrayList<String>();
+            final BookItemAdapter adapter = new BookItemAdapter(getContext(), books);
+            listView.setAdapter(adapter);
 
-            if(books != null) {
-                for (GRBook item : books) {
-                    your_array_list.add(item.getTitle());
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    GRBook book = adapter.getItem(position);
+
+                    Intent intent = new Intent(view.getContext(), SelectedBookDetailsActivity.class);
+
+                    Bundle b = new Bundle();
+                    b.putString("bookApplicationId", book.getBookId());
+
+                    intent.putExtras(b);
+
+                    view.getContext().startActivity(intent);
                 }
-            }
+            });
 
-            String [] autores= {"João Carias","David Fernandes", "João Fernandes", "Bruno Oliveira"};
-            // This is the array adapter, it takes the context of the activity as a
-            // first parameter, the type of list view as a second parameter and your
-            // array as a third parameter.
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.book_list_item, R.id.tvBookTitle, your_array_list);
-
-            listView.setAdapter(arrayAdapter);
             return rootView;
         }
 

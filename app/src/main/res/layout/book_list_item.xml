@@ -15,9 +15,8 @@
     <TextView
         android:layout_width="163dp"
         android:layout_height="wrap_content"
-        android:text="Autor Book"
+        android:text="a"
         android:id="@+id/tvBookTitle"
-        android:onClick="openBook"
         android:layout_marginRight="8dp"
         android:layout_alignTop="@+id/imageView"
         android:layout_alignStart="@+id/tvBookDate"
@@ -30,7 +29,7 @@
     <TextView
         android:layout_width="163dp"
         android:layout_height="wrap_content"
-        android:text="20-05-2016"
+        android:text="b"
         android:id="@+id/tvBookDate"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -41,6 +40,22 @@
         android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:textSize="14sp" />
+    <TextView
+        android:layout_width="163dp"
+        android:layout_height="wrap_content"
+        android:text="c"
+        android:id="@+id/tvBookAuthor"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="22dp"
+        android:layout_alignTop="@+id/tvBookDate"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
