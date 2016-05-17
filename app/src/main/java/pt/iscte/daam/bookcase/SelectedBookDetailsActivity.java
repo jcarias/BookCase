@@ -50,6 +50,9 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                                 .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
 
+                if(contactosAL.contains(contactName))
+                    continue;
+
                 contactosAL.add(contactName);
             }
             c.close();
