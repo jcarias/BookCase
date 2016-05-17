@@ -64,7 +64,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
          this.insertBook(book);
 
-        this.lentBookTo(this.getBooks().get(0), "David Fernandes");
+        this.lentBookTo(this.getBooks().get(0), "David Fernandes", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
     }
 
     public void insertBook(GRBook book) {
@@ -108,13 +108,13 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void lentBookTo(GRBook book, String userName) {
+    public void lentBookTo(GRBook book, String userName, String lentData) {
         try {
 
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("LentTo", userName);
-            values.put("LentToDate", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+            values.put("LentToDate", lentData);
 
             database.update(TABLE_NAME_BOOK, values, "ID" + "= ?", new String[]{book.getApplicationID()});
 

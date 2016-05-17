@@ -11,12 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
@@ -71,10 +74,10 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                      String contact = adapter.getItem(position);
 
                      BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
-                     bd.lentBookTo(book, contact);
+                     bd.lentBookTo(book, contact, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 
-                     contactsAreListed = false;
-                     ((ListView) findViewById(R.id.listviewpersonalcontacts)).setVisibility(View.GONE);
+                     finish();
+                     startActivity(getIntent());
                  }
              });
         }
@@ -102,7 +105,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
       //  ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(null);
 
         if(this.book.getLentTo() != null) {
-            (findViewById(R.id.buttonLentTo)).setVisibility(View.GONE);
+            ((Button) (findViewById(R.id.buttonLentTo))).setText("Returned");
             ((TextView) findViewById(R.id.lentToTextBox)).setText("Lent to " + this.book.getLentTo() + " - " + this.book.getLentToDate());
         } else {
             ((TextView) findViewById(R.id.lentToTextBox)).setText("Book available.");
@@ -111,6 +114,16 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
         (findViewById(R.id.buttonLentTo)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(book.getLentTo() != null) {
+                    BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                    bd.lentBookTo(book, null, null);
+
+                    finish();
+                    startActivity(getIntent());
+
+                    return;
+                }
+
                 if(!contactsAreListed) {
                     contactsAreListed = true;
                     (new LoadContactsAyscn()).execute();
