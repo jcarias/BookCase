@@ -107,6 +107,10 @@ public class BookCaseMainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ((ViewPager) findViewById(R.id.container)).setAdapter(mSectionsPagerAdapter);
+
         this.setProfileIcon();
     }
 
