@@ -65,11 +65,13 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
             }
 
             //DEBUG
+           /* StringBuffer buffer = new StringBuffer();
             String line;
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             while ((line = br.readLine()) != null) {
                 buffer .append(line);
             }
+            Log.i("GoodReads Debug", "GoodReads XML: " + buffer.toString());*/
             //
 
             return getBooksDataFromXml(inputStream);
