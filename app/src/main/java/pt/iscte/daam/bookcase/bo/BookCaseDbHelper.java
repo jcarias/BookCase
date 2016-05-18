@@ -19,7 +19,7 @@ import java.util.List;
 public class BookCaseDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "BookCase.db";
 
     //Table Names
@@ -36,33 +36,36 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
           GRBook book = new GRBook();
           book.setTitle("Fahrenheit 451");
-          book.setCodeISBN("9780007491568");
+          book.setWorkId("9780007491568");
           book.setAuthors("Ray Bradbury");
           book.setReleaseYear("2013");
           book.setReleaseMonth("03");
           book.setReleaseDay("28");
+          book.setAverageRating("3.4");
 
-          this.insertBook(book);
+         this.insertBook(book);
 
           book = new GRBook();
           book.setTitle("1984");
-          book.setCodeISBN("9780451524935");
+          book.setWorkId("9780451524935");
           book.setAuthors("George Orwell, Erich Fromm");
           book.setReleaseYear("1950");
           book.setReleaseMonth("07");
           book.setReleaseDay("01");
+          book.setAverageRating("5");
 
           this.insertBook(book);
 
          book = new GRBook();
          book.setTitle("A Metamorfose");
-         book.setCodeISBN("9789722637114");
+         book.setWorkId("9789722637114");
          book.setAuthors("Franz Kafka");
          book.setReleaseYear("2015");
          book.setReleaseMonth("02");
          book.setReleaseDay("01");
+         book.setAverageRating("4.2");
 
-         this.insertBook(book);
+        this.insertBook(book);
 
         this.lentBookTo(this.getBooks().get(0), "David Fernandes", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
     }
@@ -74,11 +77,12 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put("Title", book.getTitle());
-            values.put("CodeISBN", book.getCodeISBN());
+            values.put("WorkId", book.getWorkId());
             values.put("Authors", book.getAuthors());
             values.put("ReleaseYear", book.getReleaseYear());
             values.put("ReleaseMonth", book.getReleaseMonth());
             values.put("ReleaseDay", book.getReleaseDay());
+            values.put("Rating", book.getAverageRating());
 
             database.insertOrThrow(TABLE_NAME_BOOK, null, values);
 
@@ -126,18 +130,25 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<GRBook> getBooks() {
-        return this.getBooksFiltered(0);
+        return this.getBooksFiltered(0, null);
     }
 
-    public ArrayList<GRBook> getAvailableBooks() {
-        return this.getBooksFiltered(1);
-    }
+    public ArrayList<GRBook> getAvailableBooks() { return this.getBooksFiltered(1, null); }
 
     public ArrayList<GRBook> getLentBooks() {
-        return this.getBooksFiltered(2);
+        return this.getBooksFiltered(2, null);
     }
 
-    private ArrayList<GRBook> getBooksFiltered(int filter) {
+    public GRBook getBooksById(String bookId) {
+        ArrayList<GRBook> books = this.getBooksFiltered(3, bookId);
+
+        if(books != null && books.size() > 0)
+            return books.get(0);
+        else
+            return null;
+    }
+
+    private ArrayList<GRBook> getBooksFiltered(int filter, String bookId) {
 
     try{
 
@@ -148,6 +159,10 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         String[] whereArgs  = null;
 
         switch (filter) {
+            case 3:
+                whereClause = "ID = ?";
+                whereArgs = new String[]{ bookId };
+                break;
             case 2:
                 whereClause = "LentTo IS NOT NULL";
                 whereArgs = null;
@@ -164,14 +179,15 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
         Cursor c = db.query(TABLE_NAME_BOOK,
                             new String[] {"Title",
-                                          "CodeISBN",
+                                          "WorkId",
                                           "Authors",
                                           "ReleaseYear",
                                           "ID",
                                           "LentTo",
                                           "LentToDate",
                                           "ReleaseMonth",
-                                          "ReleaseDay" },
+                                          "ReleaseDay",
+                                          "Rating"},
                             whereClause,
                             whereArgs,
                             null, null, null);
@@ -182,7 +198,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                 GRBook newBook = new GRBook();
 
                 newBook.setTitle(c.getString(0));
-                newBook.setCodeISBN(c.getString(1));
+                newBook.setWorkId(c.getString(1));
                 newBook.setAuthors(c.getString(2));
                 newBook.setReleaseYear(c.getString(3));
                 newBook.setApplicationID(c.getString(4));
@@ -190,6 +206,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                 newBook.setLentToDate(c.getString(6));
                 newBook.setReleaseMonth(c.getString(7));
                 newBook.setReleaseDay(c.getString(8));
+                newBook.setAverageRating(c.getString(9));
 
                 books.add(newBook);
 
@@ -202,46 +219,6 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
         } catch (Exception e) {
             Log.e("UTILS", "Error getting books. Error:" + e.getMessage());
-            return null;
-        }
-    }
-
-    public GRBook getBooksById(String bookId) {
-
-        try{
-
-            SQLiteDatabase db = this.getReadableDatabase();
-
-            String whereClause = "ID = ?";
-            //String[] whereArgs  = new String[]{"%" + bookName + "%"};
-            String[] whereArgs  = new String[]{ bookId };
-
-            Cursor c = db.query(TABLE_NAME_BOOK,
-                    new String[] {"Title", "CodeISBN", "Authors", "ReleaseYear", "ID", "LentTo", "LentToDate" },
-                    whereClause,
-                    whereArgs,
-                    null, null, null);
-
-            GRBook newBook = new GRBook();
-
-            if(c.moveToFirst()){
-
-                    newBook.setTitle(c.getString(0));
-                    newBook.setCodeISBN(c.getString(1));
-                    newBook.setAuthors(c.getString(2));
-                    newBook.setReleaseYear(c.getString(3));
-                    newBook.setApplicationID(c.getString(4));
-                    newBook.setLentTo(c.getString(5));
-                    newBook.setLentToDate(c.getString(6));
-            }
-
-            c.close();
-            db.close();
-
-            return newBook;
-
-        } catch (Exception e) {
-            Log.e("UTILS", "Error getting book with ID " + bookId + ". Error:" + e.getMessage());
             return null;
         }
     }
@@ -285,11 +262,13 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                     "CREATE TABLE " + TABLE_NAME_BOOK + " (" +
                             "ID " + "INTEGER PRIMARY KEY  AUTOINCREMENT," +
                             "Title " + "TEXT NOT NULL," +
-                            "CodeISBN " + "TEXT UNIQUE NOT NULL," +
+                            "WorkId " + "TEXT UNIQUE NOT NULL," +
                             "Authors " + "TEXT NOT NULL," +
                             "ReleaseYear " + "TEXT NOT NULL," +
                             "ReleaseMonth " + "TEXT NOT NULL," +
                             "ReleaseDay " + "TEXT NOT NULL," +
+                            "Rating " + "TEXT NULL," +
+                            "CoverPhoto " + "BLOB NULL," +
                             "LentTo " + "TEXT NULL," +
                             "LentToDate " + "TEXT NULL" +
                             ")";

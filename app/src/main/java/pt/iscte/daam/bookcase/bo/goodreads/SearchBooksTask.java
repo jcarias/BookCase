@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -19,12 +20,12 @@ import pt.iscte.daam.bookcase.goodreads.xml.parsers.GRBooksSearchResultsParser;
 /**
  * Created by joaocarias on 25/03/16.
  */
-public class SearchBooksTask extends AsyncTask<String, Void, Book[]> {
+public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
 
     private final String LOG_TAG = SearchBooksTask.class.getSimpleName();
 
     @Override
-    protected Book[] doInBackground(String... params) {
+    protected GRBook[] doInBackground(String... params) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -57,11 +58,20 @@ public class SearchBooksTask extends AsyncTask<String, Void, Book[]> {
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+
             if (inputStream == null) {
                 // Nothing to do.
                 return null;
             }
+
+            //DEBUG
+            String line;
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            while ((line = br.readLine()) != null) {
+                buffer .append(line);
+            }
+            //
+
             return getBooksDataFromXml(inputStream);
 
         } catch (IOException e) {
@@ -85,26 +95,14 @@ public class SearchBooksTask extends AsyncTask<String, Void, Book[]> {
     }
 
 
-    private Book[] getBooksDataFromXml(InputStream inputStream) throws XmlPullParserException, IOException {
+    private GRBook[] getBooksDataFromXml(InputStream inputStream) throws XmlPullParserException, IOException {
         GRBooksSearchResultsParser parser = new GRBooksSearchResultsParser();
         parser.parse(inputStream);
 
         if (parser.getBooks().isEmpty())
-            return new Book[]{};
+            return new GRBook[]{};
         else
             return parser.getBooks().toArray(new GRBook[]{});
     }
 
-    @Override
-    protected void onPostExecute(Book[] result) {
-
-        if (result != null) {
-
-        }
-    }
-
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-    }
 }

@@ -85,16 +85,18 @@ public class BookCaseMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SearchBooksTask task = new SearchBooksTask();
-                AsyncTask<String, Void, Book[]> bookSearch = task.execute("End");
+                GRBook[] books = new GRBook[] {};
                 try {
-                    Book[] books = bookSearch.get();
+
+                    books = (new SearchBooksTask()).execute("End").get();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+
+                books.toString();
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -105,6 +106,8 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.bookTitleDetails)).setText(this.book.getTitle());
         ((TextView) findViewById(R.id.bookAuthorsDetails)).setText(this.book.getAuthors());
+        ((TextView) findViewById(R.id.ratingBook)).setText("Rating: " + this.book.getAverageRating() + "/5");
+
       //  ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(null);
 
         if(this.book.getLentTo() != null) {
