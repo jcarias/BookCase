@@ -1,6 +1,8 @@
 package pt.iscte.daam.bookcase;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -115,6 +118,27 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             ((ImageView) findViewById(R.id.coverPhoto)).setImageBitmap(bitmap);
         }
+
+        ((ImageButton)findViewById(R.id.bookDeleteButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Delete Book")
+                        .setMessage("Are you sure you want to delete this book?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
 
         if(this.book.getLentTo() != null) {
             ((Button) (findViewById(R.id.buttonLentTo))).setText("Returned");
