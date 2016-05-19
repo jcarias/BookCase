@@ -38,7 +38,7 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
         }
 
         ((TextView) convertView.findViewById(R.id.tvBookTitle)).setText(book.getTitle());
-        ((TextView) convertView.findViewById(R.id.tvBookDate)).setText(book.getPublicationDate());
+        ((TextView) convertView.findViewById(R.id.tvBookDate)).setText(book.getReleaseYear());
         ((TextView) convertView.findViewById(R.id.tvBookAuthor)).setText(book.getAuthors());
 
         if(book.getCoverImage() != null) {

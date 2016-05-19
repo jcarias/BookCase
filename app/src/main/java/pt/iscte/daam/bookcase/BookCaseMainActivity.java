@@ -90,7 +90,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
                 GRBook[] books = new GRBook[] {};
                 try {
 
-                    String[] bookNames = new String[] {"Pride and Prejudice ", "Animal Farm", "Les Misérables", "The Picture of Dorian Gray"};
+                    String[] bookNames = new String[] {"Pride and Prejudice ", "Animal Farm", "Les Misérables", "The Picture of Dorian Gray", "Calouste Gulbenkian Museum"};
                     books = (new SearchBooksTask()).execute(bookNames[(new Random()).nextInt(bookNames.length)]).get();
 
                     if(books.length > 0) {
