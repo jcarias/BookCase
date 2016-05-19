@@ -19,7 +19,7 @@ import java.util.List;
 public class BookCaseDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 10;
     public static final String DATABASE_NAME = "BookCase.db";
 
     //Table Names
@@ -83,8 +83,11 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
             values.put("ReleaseMonth", book.getReleaseMonth());
             values.put("ReleaseDay", book.getReleaseDay());
             values.put("Rating", book.getAverageRating());
+            values.put("CoverPhotoUrl", book.getImageUrl());
 
-            database.insertOrThrow(TABLE_NAME_BOOK, null, values);
+            long id = database.insertOrThrow(TABLE_NAME_BOOK, null, values);
+
+            book.setApplicationID(Long.toString(id));
 
             database.close();
 
@@ -126,6 +129,22 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
 
         } catch (Exception e) {
             Log.e("UTILS", "Error updating book, lent to. Error:" + e.getMessage());
+        }
+    }
+
+    public void updateCoverBook(GRBook book) {
+        try {
+
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("CoverPhoto", book.getCoverImage());
+
+            database.update(TABLE_NAME_BOOK, values, "ID" + "= ?", new String[]{book.getApplicationID()});
+
+            database.close();
+
+        } catch (Exception e) {
+            Log.e("UTILS", "Error updating book cover. Error:" + e.getMessage());
         }
     }
 
@@ -187,7 +206,9 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                                           "LentToDate",
                                           "ReleaseMonth",
                                           "ReleaseDay",
-                                          "Rating"},
+                                          "Rating",
+                                          "CoverPhotoUrl",
+                                          "CoverPhoto" },
                             whereClause,
                             whereArgs,
                             null, null, null);
@@ -207,6 +228,8 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                 newBook.setReleaseMonth(c.getString(7));
                 newBook.setReleaseDay(c.getString(8));
                 newBook.setAverageRating(c.getString(9));
+                newBook.setImageUrl(c.getString(10));
+                newBook.setCoverImage(c.getBlob(11));
 
                 books.add(newBook);
 
@@ -262,12 +285,13 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
                     "CREATE TABLE " + TABLE_NAME_BOOK + " (" +
                             "ID " + "INTEGER PRIMARY KEY  AUTOINCREMENT," +
                             "Title " + "TEXT NOT NULL," +
-                            "WorkId " + "TEXT UNIQUE NOT NULL," +
+                            "WorkId " + "TEXT NOT NULL," +
                             "Authors " + "TEXT NOT NULL," +
                             "ReleaseYear " + "TEXT NOT NULL," +
                             "ReleaseMonth " + "TEXT NOT NULL," +
                             "ReleaseDay " + "TEXT NOT NULL," +
                             "Rating " + "TEXT NULL," +
+                            "CoverPhotoUrl " + "TEXT NULL," +
                             "CoverPhoto " + "BLOB NULL," +
                             "LentTo " + "TEXT NULL," +
                             "LentToDate " + "TEXT NULL" +

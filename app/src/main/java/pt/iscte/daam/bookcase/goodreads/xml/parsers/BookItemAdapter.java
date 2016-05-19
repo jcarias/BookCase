@@ -2,6 +2,8 @@ package pt.iscte.daam.bookcase.goodreads.xml.parsers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +38,14 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
         }
 
         ((TextView) convertView.findViewById(R.id.tvBookTitle)).setText(book.getTitle());
-        ((TextView) convertView.findViewById(R.id.tvBookDate)).setText(book.getReleaseDay() + "-" + book.getReleaseMonth() + "-" + book.getReleaseYear());
+        ((TextView) convertView.findViewById(R.id.tvBookDate)).setText(book.getPublicationDate());
         ((TextView) convertView.findViewById(R.id.tvBookAuthor)).setText(book.getAuthors());
+
+        if(book.getCoverImage() != null) {
+            byte[] image = book.getCoverImage();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            ((ImageView) convertView.findViewById(R.id.imageView)).setImageBitmap(bitmap);
+        }
 
         return convertView;
     }

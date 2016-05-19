@@ -21,6 +21,6 @@ public interface Book {
 
     String getCodeISBN();
 
-    Image getCoverImage();
+    byte[] getCoverImage();
 
 }

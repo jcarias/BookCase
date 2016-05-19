@@ -17,6 +17,7 @@ public class GRBook extends DefaultBook {
 
     private String lentTo;
     private String lentToDate;
+    private byte[] image;
 
     public String getLentTo() {
         return this.lentTo;
@@ -107,9 +108,26 @@ public class GRBook extends DefaultBook {
     }
 
     @Override
-    public Image getCoverImage() {
-        return null;
+    public byte[] getCoverImage() {
+        return image;
     }
 
+    public void setCoverImage(byte[] img) {
+        this.image = img;
+    }
 
+    public String getPublicationDate() {
+        String finalDate = "";
+
+        if(this.getReleaseDay() != null && !this.getReleaseDay().isEmpty())
+            finalDate += this.getReleaseDay() + " - ";
+
+        if(this.getReleaseMonth() != null && !this.getReleaseMonth().isEmpty())
+            finalDate += this.getReleaseMonth() + " - ";
+
+        if(this.getReleaseYear() != null && !this.getReleaseYear().isEmpty())
+            finalDate += this.getReleaseYear();
+
+        return finalDate;
+    }
 }

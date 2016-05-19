@@ -3,6 +3,8 @@ package pt.iscte.daam.bookcase;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -108,7 +110,11 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.bookAuthorsDetails)).setText(this.book.getAuthors());
         ((TextView) findViewById(R.id.ratingBook)).setText("Rating: " + this.book.getAverageRating() + "/5");
 
-      //  ((ImageView) findViewById(R.id.imageProfilePicture)).setImageBitmap(null);
+        if(this.book.getCoverImage() != null) {
+            byte[] image = this.book.getCoverImage();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            ((ImageView) findViewById(R.id.coverPhoto)).setImageBitmap(bitmap);
+        }
 
         if(this.book.getLentTo() != null) {
             ((Button) (findViewById(R.id.buttonLentTo))).setText("Returned");

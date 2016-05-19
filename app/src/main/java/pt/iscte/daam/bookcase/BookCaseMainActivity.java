@@ -29,12 +29,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
+import pt.iscte.daam.bookcase.bo.goodreads.DownloadFileFromUrl;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
 
@@ -65,7 +67,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_case_main);
 
-        (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
+       // (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,7 +90,18 @@ public class BookCaseMainActivity extends AppCompatActivity {
                 GRBook[] books = new GRBook[] {};
                 try {
 
-                    books = (new SearchBooksTask()).execute("End").get();
+                    String[] bookNames = new String[] {"Pride and Prejudice ", "Animal Farm", "Les Misérables", "The Picture of Dorian Gray"};
+                    books = (new SearchBooksTask()).execute(bookNames[(new Random()).nextInt(bookNames.length)]).get();
+
+                    if(books.length > 0) {
+                        GRBook newBook = books[0];
+                        byte[] image = (new DownloadFileFromUrl()).execute(newBook.getImageUrl()).get();
+                        newBook.setCoverImage(image);
+
+                        BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                        bd.insertBook(newBook);
+                        bd.updateCoverBook(newBook);
+                    }
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -204,7 +217,6 @@ public class BookCaseMainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_book_case_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
             BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
