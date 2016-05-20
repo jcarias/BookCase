@@ -71,7 +71,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             super.onPostExecute(contactosAL);
 
             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    getApplicationContext(), android.R.layout.simple_list_item_1, contactosAL);
+                    getApplicationContext(), R.layout.contact_list_item, contactosAL);
 
             ((ListView) findViewById(R.id.listviewpersonalcontacts)).setVisibility(View.VISIBLE);
             ((ListView) findViewById(R.id.listviewpersonalcontacts)).setAdapter(adapter);
@@ -127,7 +127,11 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                         .setMessage("Are you sure you want to delete this book?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
+                                BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                                bd.deleteBook(book);
+
+                                Intent intent = new Intent(getApplicationContext(), BookCaseMainActivity.class);
+                                startActivity(intent);
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -170,15 +174,6 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void getContacts(View view) {
-
-        String[] fromColumns = { ContactsContract.Contacts.DISPLAY_NAME };
-        int[] toViews = { android.R.id.text1 };
-
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, fromColumns, toViews, 0);;
-        ((ListView) findViewById(R.id.listviewpersonalcontacts)).setAdapter(adapter);
     }
 
 }

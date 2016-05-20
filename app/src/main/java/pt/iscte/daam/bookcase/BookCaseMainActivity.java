@@ -216,7 +216,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_book_case_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
             BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
