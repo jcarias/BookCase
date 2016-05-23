@@ -313,6 +313,12 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteAllData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.delete(TABLE_NAME_BOOK, null, null);
+    }
+
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_BOOK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_USERPROFILE);

@@ -1,5 +1,7 @@
 package pt.iscte.daam.bookcase;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +9,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +31,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.Arrays;
 
+import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -61,6 +67,28 @@ public class ProfileActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_profile);
+
+        ((Button)findViewById(R.id.resetDataButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Reset Data")
+                        .setMessage("Are you sure you want to delete all the data stored?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                                bd.deleteAllData();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         UserProfile profile = UserProfile.getProfile(getApplicationContext());
