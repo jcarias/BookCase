@@ -96,6 +96,7 @@ public class SearchBooks extends AppCompatActivity {
 
                     Bundle b = new Bundle();
                     b.putString("bookApplicationId", book.getApplicationID());
+                    b.putInt("NewBook", 1);
 
                     intent.putExtras(b);
 

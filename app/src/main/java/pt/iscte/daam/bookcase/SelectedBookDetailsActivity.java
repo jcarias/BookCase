@@ -155,7 +155,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
         (findViewById(R.id.buttonLentTo)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(book.getLentTo() != null) {
+                if (book.getLentTo() != null) {
                     BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
                     bd.lentBookTo(book, null, null);
 
@@ -165,7 +165,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(!contactsAreListed) {
+                if (!contactsAreListed) {
                     contactsAreListed = true;
                     (new LoadContactsAyscn()).execute();
                 } else {
@@ -176,7 +176,8 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             }
         });
 
-        Snackbar.make(getWindow().getDecorView(), "Book Added!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        if(extras.getInt("NewBook") == 1)
+            Snackbar.make(getWindow().getDecorView(), "Book Added!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
 }
