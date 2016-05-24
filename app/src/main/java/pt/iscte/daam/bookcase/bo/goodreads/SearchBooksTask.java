@@ -7,12 +7,14 @@ import android.util.Log;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import pt.iscte.daam.bookcase.SearchBooks;
 import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.GRBooksSearchResultsParser;
@@ -23,14 +25,17 @@ import pt.iscte.daam.bookcase.goodreads.xml.parsers.GRBooksSearchResultsParser;
 public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
 
     private final String LOG_TAG = SearchBooksTask.class.getSimpleName();
+    private final SearchBooks activity;
+
+    public SearchBooksTask(SearchBooks activity) {
+        this.activity = activity;
+    }
 
     @Override
     protected GRBook[] doInBackground(String... params) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String goodreadsBookSearch = null;
-
 
         String appid = "hw7ty9ZhTw3SNqw6tCDPKQ";
 
@@ -74,7 +79,13 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
             Log.i("GoodReads Debug", "GoodReads XML: " + buffer.toString());*/
             //
 
-            return getBooksDataFromXml(inputStream);
+            GRBook[] books = getBooksDataFromXml(inputStream);
+
+            for(GRBook book : books){
+                book.setCoverImage(this.getCoverPhoto(book.getImageUrl()));
+            }
+
+            return books;
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -96,6 +107,13 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
         }
     }
 
+    @Override
+    protected void onPostExecute(GRBook[] books) {
+        if(books == null)
+            books = new GRBook[] {};
+
+        this.activity.loadSearchedBooks(books);
+    }
 
     private GRBook[] getBooksDataFromXml(InputStream inputStream) throws XmlPullParserException, IOException {
         GRBooksSearchResultsParser parser = new GRBooksSearchResultsParser();
@@ -107,4 +125,26 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
             return parser.getBooks().toArray(new GRBook[]{});
     }
 
+    private byte[] getCoverPhoto(String url) {
+
+        try {
+
+            URL pictureURL = new URL(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream is = pictureURL.openConnection().getInputStream();
+
+            byte[] byteChunk = new byte[4096];
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            Log.e("SearchBooksTask", "Error getting picture with url: " + url + "\nError:" + e.getMessage());
+            return null;
+        }
+    }
 }

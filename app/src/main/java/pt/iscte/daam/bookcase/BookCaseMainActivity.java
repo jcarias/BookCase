@@ -3,10 +3,8 @@ package pt.iscte.daam.bookcase;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,26 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
-import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
-import pt.iscte.daam.bookcase.bo.goodreads.DownloadFileFromUrl;
-import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
-
-import static pt.iscte.daam.bookcase.R.id.imageView;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 

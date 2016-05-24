@@ -1,12 +1,12 @@
 package pt.iscte.daam.bookcase;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewPager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,15 +14,16 @@ import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
-import pt.iscte.daam.bookcase.bo.goodreads.DownloadFileFromUrl;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
 
 public class SearchBooks extends AppCompatActivity {
+
+    private ProgressDialog progressDialog;
+    private SearchBooksTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +31,14 @@ public class SearchBooks extends AppCompatActivity {
         setContentView(R.layout.activity_search_books);
 
         final View mySearchView = getWindow().getDecorView();
+        task = new SearchBooksTask(this);
 
         SearchManager manager = (SearchManager) getSystemService(getApplicationContext().SEARCH_SERVICE);
         SearchView search = (SearchView) findViewById(R.id.searchViewBooks);
 
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        search.setQueryHint("Title, ISBN, Author...");
+        search.setIconifiedByDefault(false);
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -46,47 +50,21 @@ public class SearchBooks extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Snackbar.make(mySearchView, "Searching the Goodreads books...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (task.getStatus() == AsyncTask.Status.RUNNING)
+                    return true;
 
-                GRBook[] books = new GRBook[] {};
+                progressDialog = new ProgressDialog(SearchBooks.this);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle("Searching");
+                progressDialog.setMessage("Searching the Goodreads platform, please wait...");
+                progressDialog.setCancelable(false);
+                progressDialog.setIndeterminate(false);
+
+                progressDialog.show();
+
                 try {
-
-                    books = (new SearchBooksTask()).execute(query).get();
-
-                    for(GRBook book : books){
-                        byte[] image = (new DownloadFileFromUrl()).execute(book.getImageUrl()).get();
-                        book.setCoverImage(image);
-                    }
-
-                    final BookItemAdapter adapter = new BookItemAdapter(getApplicationContext(), new ArrayList<GRBook>(Arrays.asList(books)));
-                    ((ListView) mySearchView.findViewById(R.id.listViewBooksSearchResult)).setAdapter(adapter);
-
-                    ((ListView) mySearchView.findViewById(R.id.listViewBooksSearchResult)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            GRBook book = adapter.getItem(position);
-
-                            BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
-                            bd.insertBook(book);
-                            bd.updateCoverBook(book);
-
-                            Intent intent = new Intent(view.getContext(), SelectedBookDetailsActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                            Bundle b = new Bundle();
-                            b.putString("bookApplicationId", book.getApplicationID());
-
-                            intent.putExtras(b);
-
-                            view.getContext().startActivity(intent);
-                        }
-                    });
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                    task.execute(query);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -96,4 +74,42 @@ public class SearchBooks extends AppCompatActivity {
         });
     }
 
+    public void loadSearchedBooks(GRBook[] books) {
+
+        try {
+
+            final BookItemAdapter adapter = new BookItemAdapter(getApplicationContext(), new ArrayList<GRBook>(Arrays.asList(books)));
+            ((ListView) findViewById(R.id.listViewBooksSearchResult)).setAdapter(adapter);
+
+            ((ListView) findViewById(R.id.listViewBooksSearchResult)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    GRBook book = adapter.getItem(position);
+
+                    BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                    bd.insertBook(book);
+                    bd.updateCoverBook(book);
+
+                    Intent intent = new Intent(view.getContext(), SelectedBookDetailsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    Bundle b = new Bundle();
+                    b.putString("bookApplicationId", book.getApplicationID());
+
+                    intent.putExtras(b);
+
+                    view.getContext().startActivity(intent);
+                    finish();
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("SearchBooks", "Error loading searched books.\nError: " + e.getMessage());
+        }
+
+        task = new SearchBooksTask(this);
+        progressDialog.dismiss();
+    }
 }
+
