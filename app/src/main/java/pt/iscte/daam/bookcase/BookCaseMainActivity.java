@@ -86,34 +86,9 @@ public class BookCaseMainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                GRBook[] books = new GRBook[] {};
-                try {
-
-                    String[] bookNames = new String[] {"Pride and Prejudice ", "Animal Farm", "Les Misérables", "The Picture of Dorian Gray", "Calouste Gulbenkian Museum"};
-                    books = (new SearchBooksTask()).execute(bookNames[(new Random()).nextInt(bookNames.length)]).get();
-
-                    if(books.length > 0) {
-                        GRBook newBook = books[0];
-                        byte[] image = (new DownloadFileFromUrl()).execute(newBook.getImageUrl()).get();
-                        newBook.setCoverImage(image);
-
-                        BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
-                        bd.insertBook(newBook);
-                        bd.updateCoverBook(newBook);
-                    }
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                books.toString();
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
+                Intent intent = new Intent(getApplicationContext(), SearchBooks.class);
+                startActivity(intent);
+                return;
             }
         });
 
