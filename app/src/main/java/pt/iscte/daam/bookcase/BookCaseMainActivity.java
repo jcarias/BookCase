@@ -157,6 +157,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private ArrayList<GRBook> books = null;
 
         public PlaceholderFragment() {
         }
@@ -182,7 +183,9 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
             BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
 
-            ArrayList<GRBook> books = null;
+
+
+
             switch (getArguments().getInt(ARG_SECTION_NUMBER)){
                 case 1:
                     books = bd.getAvailableBooks();
@@ -197,6 +200,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
             final BookItemAdapter adapter = new BookItemAdapter(getContext(), books);
             listView.setAdapter(adapter);
+
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -218,6 +222,14 @@ public class BookCaseMainActivity extends AppCompatActivity {
             return rootView;
         }
 
+        @Override
+        public void onSaveInstanceState(Bundle savedInstanceState) {
+
+            savedInstanceState.putInt(ARG_SECTION_NUMBER, getArguments().getInt(ARG_SECTION_NUMBER));
+
+
+            super.onSaveInstanceState(savedInstanceState);
+        }
     }
 
     /**

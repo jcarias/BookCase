@@ -6,42 +6,61 @@
 
 
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="40dp"
+        android:layout_height="60dp"
         android:id="@+id/imageView"
         android:src="@drawable/book"
-        android:paddingLeft="16dp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="a"
+        android:text="Book Title"
         android:id="@+id/tvBookTitle"
+        android:fontFamily="robo"
         android:textSize="16sp"
         android:textStyle="bold"
         android:maxLines="2"
         android:singleLine="true"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/tvBookAuthor" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="72dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:typeface="normal" />
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="b"
+        android:text="Publish Year"
         android:id="@+id/tvBookDate"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:singleLine="true"
+        android:layout_marginLeft="72dp"
         android:layout_below="@+id/tvBookTitle"
-        android:layout_alignStart="@+id/tvBookTitle" />
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:typeface="normal" />
     <TextView
-        android:layout_width="163dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="c"
+        android:text="author"
         android:id="@+id/tvBookAuthor"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textStyle="bold"
         android:layout_below="@+id/tvBookDate"
-        android:layout_centerHorizontal="true"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="72dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:typeface="normal" />
 
 
 </RelativeLayout>
