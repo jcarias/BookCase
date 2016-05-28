@@ -22,15 +22,15 @@
         </activity>
 
         <activity android:name=".ProfileActivity"
-            android:label="Profile"/>
+            android:label="@string/profile_activity_label"/>
 
         <activity android:name=".SelectedBookDetailsActivity"
-            android:label="Book Detail"/>
+            android:label="@string/book_detail_activity_label"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="Login"
+            android:label="@string/facebook_activity_label"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <meta-data
@@ -38,7 +38,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".SearchBooks"
-            android:label="Search Books" />
+            android:label="@string/search_books_activity_label" />
     </application>
 
 </manifest>

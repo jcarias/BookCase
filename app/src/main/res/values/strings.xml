@@ -15,4 +15,8 @@
     <string name="ftpUser">bookcase</string>
     <string name="ftpPassword">daam2016</string>
     <string name="ftpUrl">pandascrib.ddns.net</string>
+    <string name="profile_activity_label">Profile</string>
+    <string name="book_detail_activity_label">Book Detail</string>
+    <string name="facebook_activity_label">Login</string>
+    <string name="search_books_activity_label">Search Books</string>
 </resources>
