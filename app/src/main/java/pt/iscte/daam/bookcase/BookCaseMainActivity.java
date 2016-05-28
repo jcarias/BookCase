@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -30,23 +31,10 @@ import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Menu menu;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +146,9 @@ public class BookCaseMainActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayList<GRBook> books = null;
+        private ListView listView;
+        private View rootView;
+        private BookItemAdapter adapter;
 
         public PlaceholderFragment() {
         }
@@ -174,33 +165,18 @@ public class BookCaseMainActivity extends AppCompatActivity {
             return fragment;
         }
 
+
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_book_case_main, container, false);
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            ListView listView = (ListView) rootView.findViewById(R.id.listView);
-
-            BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
-
-
-
-
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
-                case 1:
-                    books = bd.getAvailableBooks();
-                    break;
-                case 2:
-                    books = bd.getLentBooks();
-                    break;
-                default:
-                    books = bd.getBooks();
-                    break;
-            }
-
-            final BookItemAdapter adapter = new BookItemAdapter(getContext(), books);
+        public void onResume() {
+            super.onResume();
+            adapter = getBookItemAdapter();
             listView.setAdapter(adapter);
+        }
 
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+            rootView = inflater.inflate(R.layout.fragment_book_case_main, container, false);
+            listView = (ListView) rootView.findViewById(R.id.listView);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -220,6 +196,25 @@ public class BookCaseMainActivity extends AppCompatActivity {
             });
 
             return rootView;
+        }
+
+        @NonNull
+        private BookItemAdapter getBookItemAdapter() {
+            BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
+
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+                case 1:
+                    books = bd.getAvailableBooks();
+                    break;
+                case 2:
+                    books = bd.getLentBooks();
+                    break;
+                default:
+                    books = bd.getBooks();
+                    break;
+            }
+
+            return new BookItemAdapter(getContext(), books);
         }
 
         @Override
