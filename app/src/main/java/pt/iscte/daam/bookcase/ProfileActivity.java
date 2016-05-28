@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.Arrays;
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
+import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -55,6 +56,20 @@ public class ProfileActivity extends AppCompatActivity {
                 return null;
             }
         }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            BackupServiceTask task = new BackupServiceTask();
+            task.execute(getResources().getString(R.string.ftpUrl),
+                    getResources().getString(R.string.ftpUser),
+                    getResources().getString(R.string.ftpPassword),
+                    getApplicationContext().getPackageName(),
+                    UserProfile.getProfile(getApplicationContext()).getFacebookId(),
+                    "RESTORE");
+
+        }
+
     }
 
     @Override
@@ -122,7 +137,8 @@ public class ProfileActivity extends AppCompatActivity {
                          getResources().getString(R.string.ftpUser),
                          getResources().getString(R.string.ftpPassword),
                          getApplicationContext().getPackageName(),
-                         profile.getFacebookId());
+                         profile.getFacebookId(),
+                         "BACKUP");
 
             fillUserInformation(profile);
         }
