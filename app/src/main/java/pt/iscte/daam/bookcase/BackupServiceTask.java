@@ -34,7 +34,7 @@ public class BackupServiceTask extends AsyncTask<String, Void, Boolean> {
 
             JSch jsch = new JSch();
             Session session = jsch.getSession(user, url, 22);
-            session.setTimeout(100000);
+            //session.setTimeout(100000);
             session.setPassword(pass);
 
             // Avoid asking for key confirmation
