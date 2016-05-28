@@ -38,7 +38,8 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".SearchBooks"
-            android:label="@string/search_books_activity_label" />
+            android:label="@string/search_books_activity_label"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>
