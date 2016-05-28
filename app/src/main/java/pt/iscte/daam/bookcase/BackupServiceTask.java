@@ -9,7 +9,9 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
@@ -28,9 +30,11 @@ public class BackupServiceTask extends AsyncTask<String, Void, Boolean> {
             String pass = params[2];
             String packageName = params[3];
             String uniqueUserId = params[4];
+            String operationMode = params[5];
 
             JSch jsch = new JSch();
             Session session = jsch.getSession(user, url, 22);
+            session.setTimeout(100000);
             session.setPassword(pass);
 
             // Avoid asking for key confirmation
@@ -46,13 +50,36 @@ public class BackupServiceTask extends AsyncTask<String, Void, Boolean> {
             Channel channel = session.openChannel("sftp");
             channel.connect();
 
-            String outFileName = "/data/data/" + packageName + "/databases/" + BookCaseDbHelper.DATABASE_NAME;
-            InputStream mOutput = new FileInputStream(outFileName);
+            String dbName = "/data/data/" + packageName + "/databases/" + BookCaseDbHelper.DATABASE_NAME;
 
-            ChannelSftp sftp = (ChannelSftp) channel;
-            sftp.put(mOutput, this.getUniqueBackupName(uniqueUserId));
+            if(operationMode == "BACKUP") {
 
-            mOutput.close();
+                InputStream mOutput = new FileInputStream(dbName);
+
+                ChannelSftp sftp = (ChannelSftp) channel;
+                sftp.put(mOutput, this.getUniqueBackupName(uniqueUserId));
+
+                mOutput.close();
+                sftp.disconnect();
+
+            } else if (operationMode == "RESTORE") {
+
+                ChannelSftp sftp = (ChannelSftp) channel;
+                InputStream restore = sftp.get(this.getUniqueBackupName(uniqueUserId));
+
+                OutputStream mOutput = new FileOutputStream(dbName);
+                byte[] mBuffer = new byte[1024];
+                int mLength;
+                while ((mLength = restore.read(mBuffer))>0)
+                {
+                    mOutput.write(mBuffer, 0, mLength);
+                }
+                mOutput.flush();
+                mOutput.close();
+                restore.close();
+
+                sftp.disconnect();
+            }
 
         } catch (Exception e) {
             Log.e("PROFILE", "Profile FTP Connection: " + e.getMessage());
