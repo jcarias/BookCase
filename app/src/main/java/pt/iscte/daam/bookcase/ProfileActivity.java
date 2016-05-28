@@ -25,12 +25,9 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
 import org.json.JSONObject;
-
 import java.net.URL;
 import java.util.Arrays;
-
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.UserProfile;
 
@@ -119,6 +116,14 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         } else {
+
+            BackupServiceTask task = new BackupServiceTask();
+            task.execute(getResources().getString(R.string.ftpUrl),
+                         getResources().getString(R.string.ftpUser),
+                         getResources().getString(R.string.ftpPassword),
+                         getApplicationContext().getPackageName(),
+                         profile.getFacebookId());
+
             fillUserInformation(profile);
         }
 

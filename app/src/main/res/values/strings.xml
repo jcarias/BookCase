@@ -12,4 +12,7 @@
     <string name="title_activity_search_books_gr">Search Books on Good Reads</string>
     <string name="search_menu">Profile</string>
     <color name="blue">#0000FF</color>
+    <string name="ftpUser">bookcase</string>
+    <string name="ftpPassword">daam2016</string>
+    <string name="ftpUrl">pandascrib.ddns.net</string>
 </resources>
