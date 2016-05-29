@@ -1,7 +1,7 @@
 package pt.iscte.daam.bookcase;
 
 import android.app.AlertDialog;
-import android.content.ContentResolver;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +18,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
@@ -40,61 +38,8 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
     private GRBook book;
     private boolean contactsAreListed;
 
-    private class LoadContactsAyscn extends AsyncTask<Void, Void, ArrayList<String>> {
-
-        @Override
-        protected ArrayList<String> doInBackground(Void... params) {
-
-            ArrayList<String> contactosAL = new ArrayList<String>();
-
-            Cursor c = getContentResolver().query(
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                    null, null, null);
-            while (c.moveToNext()) {
-
-                String contactName = c
-                        .getString(c
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-
-                if(contactosAL.contains(contactName))
-                    continue;
-
-                contactosAL.add(contactName);
-            }
-            c.close();
-
-            return contactosAL;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> contactosAL) {
-            super.onPostExecute(contactosAL);
-
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    getApplicationContext(), R.layout.contact_list_item, contactosAL);
-
-            ((ListView) findViewById(R.id.listviewpersonalcontacts)).setVisibility(View.VISIBLE);
-            ((ListView) findViewById(R.id.listviewpersonalcontacts)).setAdapter(adapter);
-
-            ((ListView) findViewById(R.id.listviewpersonalcontacts)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                 @Override
-                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                     String contact = adapter.getItem(position);
-
-                     BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
-                     bd.lentBookTo(book, contact, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-
-                     finish();
-                     startActivity(getIntent());
-                 }
-             });
-        }
-    }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.book_item_details);
@@ -107,20 +52,23 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
         BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
         this.book = bd.getBooksById(bookId);
 
-        if(this.book == null)
+        if (this.book == null)
             return;
 
         ((TextView) findViewById(R.id.bookTitleDetails)).setText(this.book.getTitle());
         ((TextView) findViewById(R.id.bookAuthorsDetails)).setText(this.book.getAuthors());
-        ((TextView) findViewById(R.id.ratingBook)).setText("Rating: " + this.book.getAverageRating() + "/5");
 
-        if(this.book.getCoverImage() != null) {
+        String ratingLabel = getResources().getString(R.string.ratingLabel);
+        ((TextView) findViewById(R.id.tvRatingLabel)).setText(String.format("%s: (%s/5)", ratingLabel, this.book.getAverageRating()));
+        setRatingStars(this.book);
+
+        if (this.book.getCoverImage() != null) {
             byte[] image = this.book.getCoverImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             ((ImageView) findViewById(R.id.coverPhoto)).setImageBitmap(bitmap);
         }
 
-        ((ImageButton)findViewById(R.id.bookDeleteButton)).setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) findViewById(R.id.bookDeleteButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(v.getContext())
@@ -140,16 +88,20 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                                 // do nothing
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIcon(R.drawable.ic_warning_black_48px)
                         .show();
             }
         });
 
-        if(this.book.getLentTo() != null) {
-            ((Button) (findViewById(R.id.buttonLentTo))).setText("Returned");
-            ((TextView) findViewById(R.id.lentToTextBox)).setText("Lent to " + this.book.getLentTo() + " - " + this.book.getLentToDate());
+        if (this.book.getLentTo() != null) {
+            ((Button) (findViewById(R.id.buttonLentTo))).setText("Retake book");
+
+            ((LinearLayout) findViewById(R.id.panelLentTo)).setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.tvLentTo)).setText(this.book.getLentTo());
+            ((TextView) findViewById(R.id.tvLentToDate)).setText(this.book.getLentToDate());
         } else {
             ((TextView) findViewById(R.id.lentToTextBox)).setText("Book available.");
+            ((LinearLayout) findViewById(R.id.panelLentTo)).setVisibility(View.GONE);
         }
 
         (findViewById(R.id.buttonLentTo)).setOnClickListener(new View.OnClickListener() {
@@ -176,8 +128,75 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             }
         });
 
-        if(extras.getInt("NewBook") == 1)
+        if (extras.getInt("NewBook") == 1)
             Snackbar.make(getWindow().getDecorView(), "Book Added!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+    }
+
+    private void setRatingStars(GRBook book) {
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBookBar);
+        Float rating = new Float(this.book.getAverageRating());
+        ratingBar.setRating(rating);
+    }
+
+    private class LoadContactsAyscn extends AsyncTask<Void, Void, ArrayList<String>> {
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... params) {
+
+            ArrayList<String> contactosAL = new ArrayList<String>();
+
+            Cursor c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC");
+            while (c.moveToNext()) {
+                String contactName = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                if (contactosAL.contains(contactName))
+                    continue;
+                contactosAL.add(contactName);
+            }
+            c.close();
+
+            return contactosAL;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> contactosAL) {
+            super.onPostExecute(contactosAL);
+
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.contact_list_item, contactosAL);
+
+
+            Dialog dialog = new Dialog(SelectedBookDetailsActivity.this);
+            dialog.setContentView(R.layout.contacts_list);
+
+            ListView lv = (ListView ) dialog.findViewById(R.id.lv);
+            lv.setAdapter(adapter);
+            dialog.setCancelable(true);
+            dialog.setTitle(R.string.pick_contact_title);
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    finish();
+                    startActivity(getIntent());
+                }
+            });
+
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String contact = adapter.getItem(position);
+
+                    BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
+                    bd.lentBookTo(book, contact, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+
+                    finish();
+                    startActivity(getIntent());
+                }
+            });
+
+
+        }
     }
 
 }

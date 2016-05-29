@@ -19,4 +19,6 @@
     <string name="book_detail_activity_label">Book Detail</string>
     <string name="facebook_activity_label">Login</string>
     <string name="search_books_activity_label">Search Books</string>
+    <string name="ratingLabel">Rating</string>
+    <string name="pick_contact_title">Select person</string>
 </resources>
