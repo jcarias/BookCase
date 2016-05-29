@@ -2,6 +2,7 @@ package pt.iscte.daam.bookcase;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -128,8 +129,11 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             }
         });
 
-        if (extras.getInt("NewBook") == 1)
-            Snackbar.make(getWindow().getDecorView(), "Book Added!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        if (extras.getInt("NewBook") == 1){
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Book Added!", Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 
     private void setRatingStars(GRBook book) {

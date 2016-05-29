@@ -21,11 +21,11 @@ import pt.iscte.daam.bookcase.bo.GRBook;
  */
 public class BookItemAdapter extends ArrayAdapter<GRBook> {
     public BookItemAdapter(Context context, ArrayList<GRBook> books) {
-        super(context, 0,books);
+        super(context, 0, books);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
 
         GRBook book = getItem(position);
 
@@ -35,17 +35,20 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
 
         TextView tvBookTitle = (TextView) convertView.findViewById(R.id.tvBookTitle);
         tvBookTitle.setText(book.getTitle());
-        tvBookTitle.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.colorPrimaryDark));
+        tvBookTitle.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.colorPrimaryDark));
+        if (book.getLentTo() == null || "".equals(book.getLentTo())) {
+            tvBookTitle.setCompoundDrawables(null, null, null, null);
+        }
 
         TextView tvBookDate = (TextView) convertView.findViewById(R.id.tvBookDate);
         tvBookDate.setText(book.getReleaseYear());
-        tvBookDate.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.secondary_text));
+        tvBookDate.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.secondary_text));
 
         TextView tvBookAuthor = (TextView) convertView.findViewById(R.id.tvBookAuthor);
         tvBookAuthor.setText(book.getAuthors());
-        tvBookAuthor.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.primary_text));
+        tvBookAuthor.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.primary_text));
 
-        if(book.getCoverImage() != null) {
+        if (book.getCoverImage() != null) {
             byte[] image = book.getCoverImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             ((ImageView) convertView.findViewById(R.id.imageView)).setImageBitmap(bitmap);
