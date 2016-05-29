@@ -228,12 +228,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
             super.onSaveInstanceState(savedInstanceState);
         }
 
-        @Override
-        public void onConfigurationChanged(Configuration newConfig) {
-            super.onConfigurationChanged(newConfig);
-            adapter = getBookItemAdapter();
-            listView.setAdapter(adapter);
-        }
+
     }
 
     /**

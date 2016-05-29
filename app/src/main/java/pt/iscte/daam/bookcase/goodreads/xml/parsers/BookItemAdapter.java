@@ -36,8 +36,12 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
         TextView tvBookTitle = (TextView) convertView.findViewById(R.id.tvBookTitle);
         tvBookTitle.setText(book.getTitle());
         tvBookTitle.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.colorPrimaryDark));
-        if (book.getLentTo() == null || "".equals(book.getLentTo())) {
-            tvBookTitle.setCompoundDrawables(null, null, null, null);
+
+        ImageView ivBookLent = (ImageView) convertView.findViewById(R.id.ivBookLent);
+        if (book.getLentTo() == null) {
+            ivBookLent.setVisibility(View.INVISIBLE);
+        }else{
+            ivBookLent.setVisibility(View.VISIBLE);
         }
 
         TextView tvBookDate = (TextView) convertView.findViewById(R.id.tvBookDate);
