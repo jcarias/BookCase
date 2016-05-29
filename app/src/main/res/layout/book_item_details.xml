@@ -29,7 +29,8 @@
             android:textColor="@color/colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lend To" />
+            android:text="Lend To"
+            android:id="@+id/buttonLentTo" />
 
     </LinearLayout>
 
@@ -191,7 +192,7 @@
             android:paddingLeft="16dp" >
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/lentToTextBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="16dp"
@@ -201,7 +202,6 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/buttonLentTo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
