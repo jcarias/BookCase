@@ -46,20 +46,29 @@
                     android:id="@+id/bookTitleDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
                     android:paddingRight="16dp"
                     android:paddingTop="8dp"
                     android:text="Large Text"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="24sp" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="16dp"
+                    android:id="@+id/tvYear" />
+
                 <ImageButton
                     android:id="@+id/bookDeleteButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="8dp"
-                    android:layout_gravity="right"
-                    android:background="@drawable/ic_delete_black_24dp" />
+                    android:background="@drawable/ic_delete_black_24dp"
+                    android:layout_gravity="right" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -222,9 +231,13 @@
         android:id="@+id/buttonLentTo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:text="Lend To"
-        android:textColor="@color/colorAccent"
-        android:layout_gravity="top"/>
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_gravity="top"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="24dp"/>
 
 </LinearLayout>

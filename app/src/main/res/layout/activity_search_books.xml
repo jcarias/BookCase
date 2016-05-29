@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/listViewBooksSearchResult"
         android:layout_below="@+id/searchViewBooks"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:backgroundTint="@color/colorPrimary"/>
 
 
 </RelativeLayout>

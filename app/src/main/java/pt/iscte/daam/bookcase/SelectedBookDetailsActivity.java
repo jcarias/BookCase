@@ -57,6 +57,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.bookTitleDetails)).setText(this.book.getTitle());
         ((TextView) findViewById(R.id.bookAuthorsDetails)).setText(this.book.getAuthors());
+        ((TextView) findViewById(R.id.tvYear)).setText(this.book.getReleaseYear());
 
         String ratingLabel = getResources().getString(R.string.ratingLabel);
         ((TextView) findViewById(R.id.tvRatingLabel)).setText(String.format("%s: (%s/5)", ratingLabel, this.book.getAverageRating()));
