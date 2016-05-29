@@ -123,7 +123,6 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                     (new LoadContactsAyscn()).execute();
                 } else {
                     contactsAreListed = false;
-                    ((ListView) findViewById(R.id.listviewpersonalcontacts)).setVisibility(View.GONE);
                 }
 
             }

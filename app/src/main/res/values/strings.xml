@@ -21,4 +21,13 @@
     <string name="search_books_activity_label">Search Books</string>
     <string name="ratingLabel">Rating</string>
     <string name="pick_contact_title">Select person</string>
+    <string name="lend_to">Lend To</string>
+    <string name="lent_to">Lent To</string>
+    <string name="rating">Rating</string>
+    <string name="authors">Author</string>
+    <string name="title">Title</string>
+    <string name="book_cover_text">Book Cover</string>
+    <string name="authors_icon">authors_icon</string>
+    <string name="lent_to_icon">lent to icon</string>
+    <string name="delete_book">Delete Book</string>
 </resources>

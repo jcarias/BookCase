@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="pt.iscte.daam.bookcase.SearchBooks">
+    tools:context="pt.iscte.daam.bookcase.SearchBooks"
+    android:backgroundTint="@color/colorPrimary">
 
     <SearchView
         android:layout_width="wrap_content"
@@ -23,7 +24,9 @@
         android:id="@+id/listViewBooksSearchResult"
         android:layout_below="@+id/searchViewBooks"
         android:layout_alignParentStart="true"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTintMode="add"
+        android:choiceMode="singleChoice" />
 
 
 </RelativeLayout>
