@@ -41,7 +41,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_case_main);
 
-       // (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
+        // (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -86,21 +86,20 @@ public class BookCaseMainActivity extends AppCompatActivity {
     }
 
     private void setProfileIcon() {
-        if(this.menu == null)
+        if (this.menu == null)
             return;
 
         try {
             UserProfile profile = UserProfile.getProfile(getApplicationContext());
             Bitmap userPhoto = null;
 
-            if(profile != null)
+            if (profile != null)
                 userPhoto = profile.getPicture(getApplicationContext());
 
-            if(profile != null && userPhoto != null) {
+            if (profile != null && userPhoto != null) {
                 BitmapDrawable dra = new BitmapDrawable(getApplicationContext().getResources(), userPhoto);
                 this.menu.findItem(R.id.profile_menu).setIcon(dra);
-            }
-            else {
+            } else {
                 this.menu.findItem(R.id.profile_menu).setIcon(R.mipmap.user_profile_icon);
             }
         } catch (Exception e) {
@@ -169,7 +168,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             rootView = inflater.inflate(R.layout.fragment_book_case_main, container, false);
             listView = (ListView) rootView.findViewById(R.id.listView);
 
@@ -197,7 +196,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         private BookItemAdapter getBookItemAdapter() {
             BookCaseDbHelper bd = new BookCaseDbHelper(getContext());
 
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
                     books = bd.getAvailableBooks();
                     break;
@@ -214,10 +213,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
         @Override
         public void onSaveInstanceState(Bundle savedInstanceState) {
-
             savedInstanceState.putInt(ARG_SECTION_NUMBER, getArguments().getInt(ARG_SECTION_NUMBER));
-
-
             super.onSaveInstanceState(savedInstanceState);
         }
     }

@@ -1,23 +1,19 @@
 package pt.iscte.daam.bookcase.goodreads.xml.parsers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import pt.iscte.daam.bookcase.BookCaseMainActivity;
 import pt.iscte.daam.bookcase.R;
-import pt.iscte.daam.bookcase.SelectedBookDetailsActivity;
 import pt.iscte.daam.bookcase.bo.GRBook;
 
 /**
@@ -37,9 +33,17 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.book_list_item, parent, false);
         }
 
-        ((TextView) convertView.findViewById(R.id.tvBookTitle)).setText(book.getTitle());
-        ((TextView) convertView.findViewById(R.id.tvBookDate)).setText(book.getReleaseYear());
-        ((TextView) convertView.findViewById(R.id.tvBookAuthor)).setText(book.getAuthors());
+        TextView tvBookTitle = (TextView) convertView.findViewById(R.id.tvBookTitle);
+        tvBookTitle.setText(book.getTitle());
+        tvBookTitle.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.colorPrimaryDark));
+
+        TextView tvBookDate = (TextView) convertView.findViewById(R.id.tvBookDate);
+        tvBookDate.setText(book.getReleaseYear());
+        tvBookDate.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.secondary_text));
+
+        TextView tvBookAuthor = (TextView) convertView.findViewById(R.id.tvBookAuthor);
+        tvBookAuthor.setText(book.getAuthors());
+        tvBookAuthor.setTextColor(ContextCompat.getColor(convertView.getContext(),R.color.primary_text));
 
         if(book.getCoverImage() != null) {
             byte[] image = book.getCoverImage();
