@@ -33,6 +33,7 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.book_list_item, parent, false);
         }
 
+
         TextView tvBookTitle = (TextView) convertView.findViewById(R.id.tvBookTitle);
         tvBookTitle.setText(book.getTitle());
         tvBookTitle.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.colorPrimaryDark));
