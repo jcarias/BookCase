@@ -1,6 +1,7 @@
 package pt.iscte.daam.bookcase;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -71,6 +72,16 @@ public class BookCaseMainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ((ViewPager) findViewById(R.id.container)).setAdapter(mSectionsPagerAdapter);
+
+        this.setProfileIcon();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         ((ViewPager) findViewById(R.id.container)).setAdapter(mSectionsPagerAdapter);
@@ -215,6 +226,13 @@ public class BookCaseMainActivity extends AppCompatActivity {
         public void onSaveInstanceState(Bundle savedInstanceState) {
             savedInstanceState.putInt(ARG_SECTION_NUMBER, getArguments().getInt(ARG_SECTION_NUMBER));
             super.onSaveInstanceState(savedInstanceState);
+        }
+
+        @Override
+        public void onConfigurationChanged(Configuration newConfig) {
+            super.onConfigurationChanged(newConfig);
+            adapter = getBookItemAdapter();
+            listView.setAdapter(adapter);
         }
     }
 
