@@ -7,11 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by DVF on 05-05-2016.
@@ -172,7 +170,7 @@ public class BookCaseDbHelper extends SQLiteOpenHelper {
     try{
 
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<GRBook> books = new ArrayList<GRBook>();
+        ArrayList<GRBook> books = new ArrayList<>();
 
         String whereClause = null;
         String[] whereArgs  = null;
