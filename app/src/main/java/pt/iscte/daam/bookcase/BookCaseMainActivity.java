@@ -1,7 +1,6 @@
 package pt.iscte.daam.bookcase;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -42,15 +41,11 @@ public class BookCaseMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_case_main);
 
-        // (new BookCaseDbHelper(getApplicationContext())).insertMockBooks();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
+
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -69,25 +64,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        ((ViewPager) findViewById(R.id.container)).setAdapter(mSectionsPagerAdapter);
-
-        this.setProfileIcon();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        ((ViewPager) findViewById(R.id.container)).setAdapter(mSectionsPagerAdapter);
-
-        this.setProfileIcon();
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -221,14 +198,6 @@ public class BookCaseMainActivity extends AppCompatActivity {
 
             return new BookItemAdapter(getContext(), books);
         }
-
-        @Override
-        public void onSaveInstanceState(Bundle savedInstanceState) {
-            savedInstanceState.putInt(ARG_SECTION_NUMBER, getArguments().getInt(ARG_SECTION_NUMBER));
-            super.onSaveInstanceState(savedInstanceState);
-        }
-
-
     }
 
     /**
