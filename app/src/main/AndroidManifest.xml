@@ -41,6 +41,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".SearchBooks"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/search_books_activity_label"
             android:theme="@style/AppTheme"/>
     </application>
