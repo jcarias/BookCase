@@ -30,4 +30,8 @@
     <string name="authors_icon">authors_icon</string>
     <string name="lent_to_icon">lent to icon</string>
     <string name="delete_book">Delete Book</string>
+    <string name="message_book_returned">Book \"%s\" returned.</string>
+    <string name="message_book_lent">Book \"%1$s\" lent to \"%2$s\".</string>
+    <string name="btn_label_Retake_Book">Retake book</string>
+
 </resources>
