@@ -98,6 +98,11 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                                     BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
                                     bd.deleteBook(book);
 
+                                    String message = String.format(getResources().getString(R.string.message_book_deleted), book.getTitle());
+                                    Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+                                    toast.show();
+
+
                                     Intent intent = new Intent(getApplicationContext(), BookCaseMainActivity.class);
                                     startActivity(intent);
                                 }
