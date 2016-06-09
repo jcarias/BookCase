@@ -67,9 +67,9 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
 
             GRBook[] books = getBooksDataFromXml(inputStream);
 
-            for(GRBook book : books){
+            /*for(GRBook book : books){
                 book.setCoverImage(this.getCoverPhoto(book.getImageUrl()));
-            }
+            }*/
 
             return books;
 
@@ -117,17 +117,17 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
         try {
 
             URL pictureURL = new URL(url);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream outputStrean = new ByteArrayOutputStream();
             InputStream is = pictureURL.openConnection().getInputStream();
 
             byte[] byteChunk = new byte[4096];
             int n;
 
             while ((n = is.read(byteChunk)) > 0) {
-                baos.write(byteChunk, 0, n);
+                outputStrean.write(byteChunk, 0, n);
             }
 
-            return baos.toByteArray();
+            return outputStrean.toByteArray();
 
         } catch (Exception e) {
             Log.e("SearchBooksTask", "Error getting picture with url: " + url + "\nError:" + e.getMessage());

@@ -24,12 +24,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
+import pt.iscte.daam.bookcase.utils.RequestQueueSingleton;
 
 /**
  * Created by Bruno on 09-05-2016.
@@ -76,13 +79,16 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
 
         setRatingStars();
 
+        ImageView ivCoverPhoto = (ImageView) findViewById(R.id.coverPhoto);
         if (this.book.getCoverImage() != null) {
             byte[] image = this.book.getCoverImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-            ImageView ivCoverPhoto = (ImageView) findViewById(R.id.coverPhoto);
             if (ivCoverPhoto != null) {
                 ivCoverPhoto.setImageBitmap(bitmap);
             }
+        }else {
+            ImageLoader mImageLoader = RequestQueueSingleton.getInstance(getApplicationContext()).getImageLoader();
+            mImageLoader.get(book.getImageUrl(), ImageLoader.getImageListener(ivCoverPhoto, R.drawable.ic_book_black_48px, R.drawable.book));
         }
 
         ImageButton imgBtnDeleteBook = (ImageButton) findViewById(R.id.bookDeleteButton);
@@ -245,7 +251,13 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                 }
             });
 
-
+            Button cancelButton = (Button) dialog.findViewById(R.id.cancel_button);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
         }
     }
 
