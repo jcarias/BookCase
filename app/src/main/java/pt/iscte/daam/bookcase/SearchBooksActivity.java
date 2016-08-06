@@ -21,8 +21,9 @@ import java.util.ArrayList;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
+import pt.iscte.daam.bookcase.bo.goodreads.BookSearchResult;
 import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksAsyncTask;
-import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
+import pt.iscte.daam.bookcase.utils.BookItemAdapter;
 import pt.iscte.daam.bookcase.utils.EndlessScrollListener;
 import pt.iscte.daam.bookcase.utils.RequestQueueSingleton;
 
@@ -31,13 +32,13 @@ public class SearchBooksActivity extends AppCompatActivity {
     private static final String TAG = SearchBooksActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
     private SearchBooksAsyncTask task;
-    private byte[] byteArray;
     private ListView listView;
-    private String query2;
+    private String searchTerm;
     private BookItemAdapter bookItemAdapter;
+    private View footerView;
 
-    public String getQuery2() {
-        return query2;
+    public String getSearchTerm() {
+        return searchTerm;
     }
 
     @Override
@@ -55,16 +56,17 @@ public class SearchBooksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_books);
 
-        final View mySearchView = getWindow().getDecorView();
         task = new SearchBooksAsyncTask(this);
 
         listView = ((ListView) findViewById(R.id.listViewBooksSearchResult));
-        listView.setOnScrollListener(new EndlessScrollListener(1, this));
+        listView.setOnScrollListener(new EndlessScrollListener(10, this));
         bookItemAdapter = new BookItemAdapter(getApplicationContext(), new ArrayList<GRBook>());
         listView.setAdapter(bookItemAdapter);
 
+        footerView = getLayoutInflater().inflate(R.layout.list_footer_view, null, false);
+
         SearchManager manager = (SearchManager) getSystemService(getApplicationContext().SEARCH_SERVICE);
-        SearchView search = (SearchView) findViewById(R.id.searchViewBooks);
+        final SearchView search = (SearchView) findViewById(R.id.searchViewBooks);
 
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
         search.setQueryHint("Title, ISBN, Author...");
@@ -93,24 +95,41 @@ public class SearchBooksActivity extends AppCompatActivity {
                 progressDialog.show();
 
                 try {
-                    query2 = query;
+                    searchTerm = query;
                     task.execute(query);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                search.clearFocus();
+                bookItemAdapter.clear();
+                bookItemAdapter.notifyDataSetChanged();
                 return true;
+
             }
 
         });
     }
 
-    public void loadSearchedBooks(GRBook[] books) {
+    public void loadSearchedBooks(BookSearchResult result) {
         try {
-            for (GRBook book : books) {
-                bookItemAdapter.add(book);
+            if (result != null) {
+                if (!result.getBooks().isEmpty()) {
+                    for (GRBook book : result.getBooks()) {
+                        bookItemAdapter.add(book);
+                    }
+                    bookItemAdapter.notifyDataSetChanged();
+                }
+
+                if (result.isHasMoreResults()) {
+                    if (listView.getFooterViewsCount() == 0) {
+                        listView.addFooterView(footerView);
+                    }
+                }else if (listView.getFooterViewsCount() > 0) {
+                    listView.removeFooterView(footerView);
+                }
             }
 
+            listView.requestFocus();
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -141,7 +160,9 @@ public class SearchBooksActivity extends AppCompatActivity {
         }
 
         task = new SearchBooksAsyncTask(this);
-        progressDialog.dismiss();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private void downloadAndUpdateBookCover(final GRBook book) {

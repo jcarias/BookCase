@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.bo.UserProfile;
-import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
+import pt.iscte.daam.bookcase.utils.BookItemAdapter;
 
 public class BookCaseMainActivity extends AppCompatActivity {
 

@@ -31,7 +31,7 @@ public class EndlessScrollListener implements AbsListView.OnScrollListener {
             }
         }
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-            new SearchBooksAsyncTask(senderActivity).execute(senderActivity.getQuery2(), currentPage + 1 + "");
+            new SearchBooksAsyncTask(senderActivity).execute(senderActivity.getSearchTerm(), currentPage + 1 + "");
             loading = true;
         }
     }

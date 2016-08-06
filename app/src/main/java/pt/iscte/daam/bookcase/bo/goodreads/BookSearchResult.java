@@ -1,31 +1,27 @@
 package pt.iscte.daam.bookcase.bo.goodreads;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.daam.bookcase.bo.Book;
+import pt.iscte.daam.bookcase.bo.GRBook;
 
 /**
  * Class to keep the Book search results to enable pagination
  * Created by joaocarias on 14/06/16.
  */
 public class BookSearchResult {
-    private int resultsStart;
-    private int resultsEnd;
-    private int totalResults;
-    private int currentPage;
+    private List<GRBook> books;
+    private boolean hasMoreResults;
 
-    private List<Book> books;
-
-    public BookSearchResult() {
-        this.resultsStart = 0;
-        this.resultsEnd = 0;
-        this.totalResults = 0;
-        this.currentPage = 0;
-        this.books = new ArrayList<>(0);
+    public BookSearchResult(List<GRBook> books, boolean hasMoreResults) {
+        this.books = books;
+        this.hasMoreResults = hasMoreResults;
     }
 
-    public void parseSearchResult(List<Book> books) {
-        this.books = books;
+    public List<GRBook> getBooks() {
+        return books;
+    }
+
+    public boolean isHasMoreResults() {
+        return hasMoreResults;
     }
 }

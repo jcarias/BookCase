@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.GRBook;
 
 /**
@@ -19,14 +18,33 @@ import pt.iscte.daam.bookcase.bo.GRBook;
  */
 public class GRBooksSearchResultsParser extends AbstractXMLParser {
 
-    private List<Book> books;
+    private List<GRBook> books;
+    private String resultsEnd;
+    private String totalResults;
 
     public GRBooksSearchResultsParser() {
         books = new ArrayList<>();
     }
 
-    public List<Book> getBooks() {
+    public List<GRBook> getBooks() {
         return books;
+    }
+
+    public boolean hasMoreBooks() {
+        Integer resultsEnd, totalResults;
+
+        try {
+            resultsEnd = Integer.valueOf(this.resultsEnd);
+        } catch (NumberFormatException e) {
+            resultsEnd = 0;
+        }
+        try {
+            totalResults = Integer.valueOf(this.totalResults);
+        } catch (NumberFormatException e) {
+            totalResults = 0;
+        }
+
+        return resultsEnd < totalResults;
     }
 
     public void parse(InputStream in) throws XmlPullParserException, IOException {
@@ -66,8 +84,11 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
                 continue;
             }
             String name = parser.getName();
-
-            if (name.equals("results")) {
+            if ("results-end".equals(name)) {
+                this.resultsEnd = readTagText(parser, name);
+            } else if ("total-results".equals(name)) {
+                this.totalResults = readTagText(parser, name);
+            } else if (name.equals("results")) {
                 readResults(parser);
             } else {
                 skip(parser);

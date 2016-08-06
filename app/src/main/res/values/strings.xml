@@ -35,5 +35,6 @@
     <string name="btn_label_Retake_Book">Retake book</string>
     <string name="message_book_deleted">Book \"%s\" has been removed.</string>
     <string name="cancel">Cancel</string>
+    <string name="loading_more">Loading more books...</string>
 
 </resources>

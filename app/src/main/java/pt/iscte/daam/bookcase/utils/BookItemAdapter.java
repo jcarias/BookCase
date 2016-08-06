@@ -1,4 +1,4 @@
-package pt.iscte.daam.bookcase.goodreads.xml.parsers;
+package pt.iscte.daam.bookcase.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import pt.iscte.daam.bookcase.R;
 import pt.iscte.daam.bookcase.bo.GRBook;
-import pt.iscte.daam.bookcase.utils.RequestQueueSingleton;
 
 /**
  * Created by Bruno on 04-05-2016.
@@ -72,5 +71,10 @@ public class BookItemAdapter extends ArrayAdapter<GRBook> {
         }
 
         return convertView;
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
     }
 }
