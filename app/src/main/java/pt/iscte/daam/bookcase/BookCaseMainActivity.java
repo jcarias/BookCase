@@ -56,7 +56,7 @@ public class BookCaseMainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SearchBooks.class);
+                Intent intent = new Intent(getApplicationContext(), SearchBooksActivity.class);
                 startActivity(intent);
                 return;
             }

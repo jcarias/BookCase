@@ -14,16 +14,18 @@ import pt.iscte.daam.bookcase.bo.Book;
 import pt.iscte.daam.bookcase.bo.GRBook;
 
 /**
+ * XML Parser for the search results
  * Created by joaocarias on 26/03/16.
  */
 public class GRBooksSearchResultsParser extends AbstractXMLParser {
 
     private List<Book> books;
 
+    public GRBooksSearchResultsParser() {
+        books = new ArrayList<>();
+    }
+
     public List<Book> getBooks() {
-        if (books == null) {
-            books = new ArrayList<>();
-        }
         return books;
     }
 
@@ -34,6 +36,7 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
             parser.setInput(in, null);
             parser.nextTag();
             readFeed(parser);
+
         } finally {
             in.close();
         }
@@ -51,6 +54,8 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
             } else {
                 skip(parser);
             }
+
+
         }
     }
 
@@ -61,6 +66,7 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
                 continue;
             }
             String name = parser.getName();
+
             if (name.equals("results")) {
                 readResults(parser);
             } else {
@@ -76,7 +82,8 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("work")) {
+
+            if ("work".equals(name)) {
                 readWork(parser);
             } else {
                 skip(parser);
@@ -92,7 +99,6 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-
 
             String name = parser.getName();
             switch (name) {
@@ -120,7 +126,7 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
 
         }
 
-        getBooks().add(book);
+        books.add(book);
     }
 
     private void readBestBook(XmlPullParser parser, GRBook book) throws XmlPullParserException, IOException {
@@ -173,12 +179,13 @@ public class GRBooksSearchResultsParser extends AbstractXMLParser {
 
         String listString = "";
 
-        for (String s : authorsList)
-        {
+        for (String s : authorsList) {
             listString += s + "\t";
         }
 
         book.setAuthors(listString);
     }
 
+
 }
+

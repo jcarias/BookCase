@@ -1,14 +1,17 @@
 package pt.iscte.daam.bookcase;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +42,7 @@ import pt.iscte.daam.bookcase.utils.RequestQueueSingleton;
  */
 public class SelectedBookDetailsActivity extends AppCompatActivity {
 
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private GRBook book;
 
     @Override
@@ -86,7 +90,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             if (ivCoverPhoto != null) {
                 ivCoverPhoto.setImageBitmap(bitmap);
             }
-        }else {
+        } else {
             ImageLoader mImageLoader = RequestQueueSingleton.getInstance(getApplicationContext()).getImageLoader();
             mImageLoader.get(book.getImageUrl(), ImageLoader.getImageListener(ivCoverPhoto, R.drawable.ic_book_black_48px, R.drawable.book));
         }
@@ -168,8 +172,13 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
                         return;
                     } else {
 
-                        //Carrega a lista de Contactos e Mostra o dialog
-                        (new LoadContactsAyscn()).execute();
+                        // Check the SDK version and whether the permission is already granted or not.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+                        } else {
+                            //Carrega a lista de Contactos e Mostra o dialog
+                            (new LoadContactsAyscn()).execute();
+                        }
 
                     }
                 }
@@ -181,6 +190,18 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
             Context context = getApplicationContext();
             Toast toast = Toast.makeText(context, "Book Added!", Toast.LENGTH_LONG);
             toast.show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                (new LoadContactsAyscn()).execute();
+            } else {
+                Toast.makeText(this, "Until you grant the permission, we cannot display the names.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -198,6 +219,7 @@ public class SelectedBookDetailsActivity extends AppCompatActivity {
         protected ArrayList<String> doInBackground(Void... params) {
 
             ArrayList<String> contactosAL = new ArrayList<>();
+
 
             Cursor c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
             while (c != null && c.moveToNext()) {

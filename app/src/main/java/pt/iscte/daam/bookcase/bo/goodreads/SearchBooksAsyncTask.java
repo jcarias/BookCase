@@ -2,31 +2,30 @@ package pt.iscte.daam.bookcase.bo.goodreads;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import pt.iscte.daam.bookcase.SearchBooks;
+import pt.iscte.daam.bookcase.SearchBooksActivity;
 import pt.iscte.daam.bookcase.bo.GRBook;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.GRBooksSearchResultsParser;
 
 /**
+ * Async task to search the books
  * Created by joaocarias on 25/03/16.
  */
-public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
+public class SearchBooksAsyncTask extends AsyncTask<String, Void, GRBook[]> {
 
-    private final String LOG_TAG = SearchBooksTask.class.getSimpleName();
-    private final SearchBooks activity;
+    private final String LOG_TAG = SearchBooksAsyncTask.class.getSimpleName();
+    private final SearchBooksActivity activity;
 
-    public SearchBooksTask(SearchBooks activity) {
+    public SearchBooksAsyncTask(SearchBooksActivity activity) {
         this.activity = activity;
     }
 
@@ -43,16 +42,18 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
             final String BOOK_SEARCH_BASE_URL = "https://www.goodreads.com/search/index.xml?";
             final String QUERY_PARAM = "q";
             final String PAGE = "page";
-            final String SEARCH_FIELD = "search";
-            final String DAYS_PARAM = "cnt";
             final String API_KEY_PARAM = "key";
 
-            Uri builtUri = Uri.parse(BOOK_SEARCH_BASE_URL).buildUpon()
+            Uri.Builder builtUri = Uri.parse(BOOK_SEARCH_BASE_URL).buildUpon()
                     .appendQueryParameter(API_KEY_PARAM, appid)
-                    .appendQueryParameter(QUERY_PARAM, params[0])
-                    .build();
+                    .appendQueryParameter(QUERY_PARAM, params[0]);
 
-            URL url = new URL(builtUri.toString());
+            if (params != null && params.length > 1) {
+                builtUri.appendQueryParameter(PAGE, params[1]);
+            }
+
+
+            URL url = new URL(builtUri.build().toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -64,12 +65,7 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
                 return null;
             }
 
-
             GRBook[] books = getBooksDataFromXml(inputStream);
-
-            /*for(GRBook book : books){
-                book.setCoverImage(this.getCoverPhoto(book.getImageUrl()));
-            }*/
 
             return books;
 
@@ -95,8 +91,8 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
 
     @Override
     protected void onPostExecute(GRBook[] books) {
-        if(books == null)
-            books = new GRBook[] {};
+        if (books == null)
+            books = new GRBook[]{};
 
         this.activity.loadSearchedBooks(books);
     }
@@ -111,27 +107,7 @@ public class SearchBooksTask extends AsyncTask<String, Void, GRBook[]> {
             return parser.getBooks().toArray(new GRBook[]{});
     }
 
-    @Nullable
-    private byte[] getCoverPhoto(String url) {
 
-        try {
 
-            URL pictureURL = new URL(url);
-            ByteArrayOutputStream outputStrean = new ByteArrayOutputStream();
-            InputStream is = pictureURL.openConnection().getInputStream();
 
-            byte[] byteChunk = new byte[4096];
-            int n;
-
-            while ((n = is.read(byteChunk)) > 0) {
-                outputStrean.write(byteChunk, 0, n);
-            }
-
-            return outputStrean.toByteArray();
-
-        } catch (Exception e) {
-            Log.e("SearchBooksTask", "Error getting picture with url: " + url + "\nError:" + e.getMessage());
-            return null;
-        }
-    }
 }

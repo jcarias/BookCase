@@ -18,20 +18,27 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import pt.iscte.daam.bookcase.bo.BookCaseDbHelper;
 import pt.iscte.daam.bookcase.bo.GRBook;
-import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksTask;
+import pt.iscte.daam.bookcase.bo.goodreads.SearchBooksAsyncTask;
 import pt.iscte.daam.bookcase.goodreads.xml.parsers.BookItemAdapter;
+import pt.iscte.daam.bookcase.utils.EndlessScrollListener;
 import pt.iscte.daam.bookcase.utils.RequestQueueSingleton;
 
-public class SearchBooks extends AppCompatActivity {
+public class SearchBooksActivity extends AppCompatActivity {
 
-    private static final String TAG = SearchBooks.class.getSimpleName();
+    private static final String TAG = SearchBooksActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
-    private SearchBooksTask task;
+    private SearchBooksAsyncTask task;
     private byte[] byteArray;
+    private ListView listView;
+    private String query2;
+    private BookItemAdapter bookItemAdapter;
+
+    public String getQuery2() {
+        return query2;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -49,7 +56,12 @@ public class SearchBooks extends AppCompatActivity {
         setContentView(R.layout.activity_search_books);
 
         final View mySearchView = getWindow().getDecorView();
-        task = new SearchBooksTask(this);
+        task = new SearchBooksAsyncTask(this);
+
+        listView = ((ListView) findViewById(R.id.listViewBooksSearchResult));
+        listView.setOnScrollListener(new EndlessScrollListener(1, this));
+        bookItemAdapter = new BookItemAdapter(getApplicationContext(), new ArrayList<GRBook>());
+        listView.setAdapter(bookItemAdapter);
 
         SearchManager manager = (SearchManager) getSystemService(getApplicationContext().SEARCH_SERVICE);
         SearchView search = (SearchView) findViewById(R.id.searchViewBooks);
@@ -71,7 +83,7 @@ public class SearchBooks extends AppCompatActivity {
                 if (task.getStatus() == AsyncTask.Status.RUNNING)
                     return true;
 
-                progressDialog = new ProgressDialog(SearchBooks.this);
+                progressDialog = new ProgressDialog(SearchBooksActivity.this);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setTitle("Searching");
                 progressDialog.setMessage("Searching the Goodreads platform, please wait...");
@@ -81,6 +93,7 @@ public class SearchBooks extends AppCompatActivity {
                 progressDialog.show();
 
                 try {
+                    query2 = query;
                     task.execute(query);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -93,19 +106,17 @@ public class SearchBooks extends AppCompatActivity {
     }
 
     public void loadSearchedBooks(GRBook[] books) {
-
         try {
+            for (GRBook book : books) {
+                bookItemAdapter.add(book);
+            }
 
-            final BookItemAdapter adapter = new BookItemAdapter(getApplicationContext(), new ArrayList<GRBook>(Arrays.asList(books)));
 
-
-            ((ListView) findViewById(R.id.listViewBooksSearchResult)).setAdapter(adapter);
-
-            ((ListView) findViewById(R.id.listViewBooksSearchResult)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    GRBook book = adapter.getItem(position);
+                    GRBook book = bookItemAdapter.getItem(position);
                     BookCaseDbHelper bd = new BookCaseDbHelper(getApplicationContext());
                     bd.insertBook(book);
 
@@ -126,10 +137,10 @@ public class SearchBooks extends AppCompatActivity {
             });
 
         } catch (Exception e) {
-            Log.e("SearchBooks", "Error loading searched books.\nError: " + e.getMessage());
+            Log.e(TAG, "Error loading searched books.\nError: " + e.getMessage());
         }
 
-        task = new SearchBooksTask(this);
+        task = new SearchBooksAsyncTask(this);
         progressDialog.dismiss();
     }
 
